@@ -92,8 +92,20 @@
         
         p.subtitle {
             font-size: 1.1rem;
-            margin-bottom: 25px;
+            margin-bottom: 10px;
             color: #ddd;
+        }
+
+        .deadline-banner {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff4c4c;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(255, 76, 76, 0.3);
         }
 
         /* State Sections */
@@ -109,7 +121,7 @@
         }
 
         /* Form Elements */
-        input {
+        input, select {
             width: 100%;
             padding: 15px;
             margin-bottom: 20px;
@@ -122,7 +134,15 @@
             text-align: center;
             transition: 0.3s;
         }
-        input:focus { border-color: var(--gold); background: rgba(0, 0, 0, 0.5); }
+        select {
+            appearance: none;
+            cursor: pointer;
+        }
+        select option {
+            background: var(--primary-bg);
+            color: white;
+        }
+        input:focus, select:focus { border-color: var(--gold); background: rgba(0, 0, 0, 0.5); }
         
         button.btn-primary {
             width: 100%;
@@ -194,7 +214,7 @@
         }
 
         .timer-box {
-            font-size: 2.8rem; /* Scaled down slightly to perfectly fit HH:MM:SS */
+            font-size: 2.8rem;
             font-weight: 800;
             color: var(--gold-light);
             letter-spacing: 2px;
@@ -217,25 +237,26 @@
             align-items: center;
             justify-content: center;
             color: #000;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 800;
             border-bottom: 1px solid #ddd;
             background: #fff;
+            padding: 0 10px;
         }
-        .roller-item span.phone { 
-            font-size: 1.1rem; 
+        .roller-item span.account-details { 
+            font-size: 1rem; 
             color: #444; 
             font-weight: 600;
             margin-top: 5px;
             background: #eee;
-            padding: 2px 10px;
+            padding: 3px 12px;
             border-radius: 10px;
         }
 
         /* Winner Section */
         .trophy { font-size: 5rem; margin-bottom: 10px; animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .winner-name { font-size: 2.2rem; color: var(--gold); font-weight: 800; margin-bottom: 10px; text-transform: uppercase;}
-        .winner-phone { font-size: 1.5rem; color: #fff; background: rgba(0,0,0,0.5); padding: 5px 20px; border-radius: 20px; display: inline-block; border: 1px solid var(--gold);}
+        .winner-account { font-size: 1.2rem; color: #fff; background: rgba(0,0,0,0.5); padding: 8px 20px; border-radius: 20px; display: inline-block; border: 1px solid var(--gold);}
 
         @keyframes popIn {
             0% { transform: scale(0); }
@@ -274,11 +295,22 @@
     <div class="container">
         <h1>Eid Giveaway 🌙</h1>
         <p class="subtitle" id="status-text">Register now to win a special Eid gift!</p>
+        
+        <!-- Registration Deadline Notice -->
+        <div class="deadline-banner" id="deadline-banner">
+            ⚠️ Roll registration is ended on Eid first day 9:30Am
+        </div>
 
         <!-- 1. Registration Section -->
         <div id="registration-sec" class="section active">
-            <input type="text" id="userName" placeholder="Enter Your Full Name" required>
-            <input type="tel" id="userPhone" placeholder="Enter Mobile Number (e.g., 03001234567)" required>
+            <select id="paymentMethod" required>
+                <option value="" disabled selected>Select Payment Method</option>
+                <option value="Easypaisa">Easypaisa</option>
+                <option value="JazzCash">JazzCash</option>
+            </select>
+            <input type="text" id="holderName" placeholder="Account Holder Name" required>
+            <input type="tel" id="accountNumber" placeholder="Account Number" required>
+            
             <button class="btn-primary" id="btn-apply" onclick="submitEntry()">Apply for Giveaway</button>
             <p id="reg-message" style="margin-top: 15px; color: var(--gold); font-weight: bold; display: none;"></p>
         </div>
@@ -307,7 +339,7 @@
             <div class="trophy">🏆</div>
             <h2 style="font-size: 1.5rem; margin-bottom: 10px;">And the Winner is...</h2>
             <div class="winner-name" id="win-name">---</div>
-            <div class="winner-phone" id="win-phone">---</div>
+            <div class="winner-account" id="win-account">---</div>
             <p style="margin-top: 20px; font-size: 1.3rem; color: var(--gold); font-weight: bold;">Eid Mubarak! ✨</p>
         </div>
     </div>
@@ -363,22 +395,23 @@
                 }
             } else {
                 // -> AUTOMATIC CLEAR LOGIC:
-                // If the snapshot doesn't exist, it means the Admin deleted all users.
                 usersData = {};
                 if(isAdmin) document.getElementById('admin-user-count').innerText = `Users: 0`;
 
-                // 1. Clear local browser memory so they are allowed to register again
+                // 1. Clear local browser memory
                 localStorage.removeItem('giveaway_registered');
                 isRegisteredLocally = false;
 
-                // 2. Automatically clear input boxes to make them blank
-                document.getElementById('userName').value = '';
-                document.getElementById('userPhone').value = '';
+                // 2. Automatically clear input boxes
+                document.getElementById('paymentMethod').value = '';
+                document.getElementById('holderName').value = '';
+                document.getElementById('accountNumber').value = '';
 
-                // 3. If they are looking at the registration page, instantly show the form again
+                // 3. Reset UI visibility
                 if (currentState === 'registration') {
-                    document.getElementById('userName').style.display = 'block';
-                    document.getElementById('userPhone').style.display = 'block';
+                    document.getElementById('paymentMethod').style.display = 'block';
+                    document.getElementById('holderName').style.display = 'block';
+                    document.getElementById('accountNumber').style.display = 'block';
                     document.getElementById('btn-apply').style.display = 'block';
                     document.getElementById('reg-message').style.display = 'none';
                 }
@@ -398,23 +431,27 @@
             // Handle UI based on state
             if (currentState === 'registration') {
                 showSection('registration-sec');
+                document.getElementById('deadline-banner').style.display = 'block';
                 document.getElementById('status-text').innerText = "Register now to win a special Eid gift!";
                 
                 if(isRegisteredLocally) {
-                    document.getElementById('userName').style.display = 'none';
-                    document.getElementById('userPhone').style.display = 'none';
+                    document.getElementById('paymentMethod').style.display = 'none';
+                    document.getElementById('holderName').style.display = 'none';
+                    document.getElementById('accountNumber').style.display = 'none';
                     document.getElementById('btn-apply').style.display = 'none';
                     document.getElementById('reg-message').style.display = 'block';
                     document.getElementById('reg-message').innerText = "✅ You are registered! Waiting for admin to start the timer.";
                 } else {
-                    document.getElementById('userName').style.display = 'block';
-                    document.getElementById('userPhone').style.display = 'block';
+                    document.getElementById('paymentMethod').style.display = 'block';
+                    document.getElementById('holderName').style.display = 'block';
+                    document.getElementById('accountNumber').style.display = 'block';
                     document.getElementById('btn-apply').style.display = 'block';
                     document.getElementById('reg-message').style.display = 'none';
                 }
             } 
             else if (currentState === 'countdown') {
                 showSection('machine-sec');
+                document.getElementById('deadline-banner').style.display = 'none';
                 document.getElementById('status-text').innerText = "Entries Locked! Get Ready.";
                 document.getElementById('machine-footer-text').innerText = "Timer is running...";
                 
@@ -425,6 +462,7 @@
             }
             else if (currentState === 'rolling') {
                 showSection('machine-sec');
+                document.getElementById('deadline-banner').style.display = 'none';
                 document.getElementById('status-text').innerText = "Good Luck!";
                 document.getElementById('machine-footer-text').innerText = "Spinning live...";
                 
@@ -435,10 +473,11 @@
             }
             else if (currentState === 'finished') {
                 showSection('winner-sec');
+                document.getElementById('deadline-banner').style.display = 'none';
                 document.getElementById('status-text').innerText = "Giveaway Ended!";
                 if(data.winner) {
                     document.getElementById('win-name').innerText = data.winner.name;
-                    document.getElementById('win-phone').innerText = data.winner.phone;
+                    document.getElementById('win-account').innerText = `${data.winner.method} - ${data.winner.account}`;
                     triggerConfetti();
                 }
             }
@@ -448,25 +487,28 @@
         // 2. USER FUNCTIONS
         // ==========================================
         window.submitEntry = function() {
-            const name = document.getElementById('userName').value.trim();
-            const phone = document.getElementById('userPhone').value.trim();
+            const method = document.getElementById('paymentMethod').value;
+            const name = document.getElementById('holderName').value.trim();
+            const account = document.getElementById('accountNumber').value.trim();
 
-            if (!name || !phone) {
-                alert("Please enter both Name and Phone Number.");
+            if (!method || !name || !account) {
+                alert("Please fill out all fields: Payment Method, Holder Name, and Account Number.");
                 return;
             }
 
             // Push to Firebase
             push(ref(db, 'users'), {
+                method: method,
                 name: name,
-                phone: phone,
+                account: account,
                 timestamp: Date.now()
             }).then(() => {
                 localStorage.setItem('giveaway_registered', 'true');
                 isRegisteredLocally = true;
                 
-                document.getElementById('userName').style.display = 'none';
-                document.getElementById('userPhone').style.display = 'none';
+                document.getElementById('paymentMethod').style.display = 'none';
+                document.getElementById('holderName').style.display = 'none';
+                document.getElementById('accountNumber').style.display = 'none';
                 document.getElementById('btn-apply').style.display = 'none';
                 document.getElementById('reg-message').style.display = 'block';
                 document.getElementById('reg-message').innerText = "✅ Registration Successful! Please stay on this page.";
@@ -534,7 +576,7 @@
             document.getElementById(id).classList.add('active');
         }
 
-        // --- UPDATED COUNTDOWN TIMER WITH HOURS, MINUTES, SECONDS ---
+        // --- COUNTDOWN TIMER ---
         function startLocalCountdown(endTime) {
             clearInterval(countdownInterval);
             
@@ -549,7 +591,6 @@
                     return;
                 }
 
-                // Math to calculate total hours, remaining minutes, and seconds
                 const totalSeconds = Math.floor(diff / 1000);
                 const hours = Math.floor(totalSeconds / 3600);
                 const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -563,25 +604,22 @@
 
         function triggerRollerAnimation(winner) {
             const rollerList = document.getElementById('roller-list');
-            rollerList.innerHTML = ''; // clear previous list
+            rollerList.innerHTML = ''; 
             
-            // Remove CSS transition temporarily to reset start position instantly
             rollerList.style.transition = 'none';
             rollerList.style.transform = 'translateY(0)';
 
             const userKeys = Object.keys(usersData);
-            
-            // Create 35 fake slots for the spinning effect
             const totalSpins = 35;
             
             for (let i = 0; i < totalSpins - 1; i++) {
-                let randomUser = {name: "Loading...", phone: "03000000000"};
+                let randomUser = {name: "Loading...", account: "000000000", method: "Payment"};
                 if(userKeys.length > 0) {
                     randomUser = usersData[userKeys[Math.floor(Math.random() * userKeys.length)]];
                 }
                 const li = document.createElement('li');
                 li.className = 'roller-item';
-                li.innerHTML = `${randomUser.name} <span class="phone">${randomUser.phone}</span>`;
+                li.innerHTML = `${randomUser.name} <span class="account-details">${randomUser.method} - ${randomUser.account}</span>`;
                 rollerList.appendChild(li);
             }
 
@@ -589,15 +627,15 @@
             const winLi = document.createElement('li');
             winLi.className = 'roller-item';
             winLi.style.background = '#FFEA70'; // Gold highlight background
-            winLi.innerHTML = `🏆 ${winner.name} <span class="phone">${winner.phone}</span>`;
+            winLi.innerHTML = `🏆 ${winner.name} <span class="account-details">${winner.method} - ${winner.account}</span>`;
             rollerList.appendChild(winLi);
 
-            // Force DOM reflow to apply the reset position before we start moving
+            // Force DOM reflow
             void rollerList.offsetWidth;
 
-            // Re-apply transition and move to the very bottom item
+            // Move to the very bottom item
             rollerList.style.transition = 'transform 5s cubic-bezier(0.1, 0.7, 0.1, 1)';
-            const itemHeight = 140; // Exact match to CSS .roller-item height
+            const itemHeight = 140; 
             const stopPosition = -((totalSpins - 1) * itemHeight);
             rollerList.style.transform = `translateY(${stopPosition}px)`;
         }
