@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eid Mubarak Live Giveaway 🌙</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Confetti JS -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary-bg: #06402B; /* Deep Eid Green */
+            --secondary-bg: #032116;
+            --gold: #FFD700;
+            --gold-light: #FFEA70;
+            --text-light: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top, var(--primary-bg), var(--secondary-bg));
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Decorations */
+        .decorations {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.3;
+        }
+        
+        .lantern {
+            position: absolute;
+            top: -20px;
+            font-size: 4rem;
+            animation: swing 3s ease-in-out infinite alternate;
+            z-index: 1;
+        }
+        .lantern-left { left: 10%; }
+        .lantern-right { right: 10%; animation-delay: 1.5s; }
+
+        @keyframes swing {
+            0% { transform: rotate(5deg); }
+            100% { transform: rotate(-5deg); }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 550px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-family: 'Amiri', serif;
+            color: var(--gold);
+            font-size: 2.8rem;
+            margin-bottom: 5px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+        
+        p.subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #ddd;
+        }
+
+        /* State Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s forwards;
+        }
+        .section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Elements */
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            text-align: center;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--gold); background: rgba(0, 0, 0, 0.5); }
+        
+        button.btn-primary {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(45deg, var(--gold), #FFA500);
+            color: #000;
+            font-weight: 800;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+            transition: 0.3s;
+        }
+        button.btn-primary:hover { transform: scale(1.03); }
+
+        /* Roller Machine Section */
+        .machine-title {
+            color: var(--gold);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .roller-container {
+            background: #fff;
+            border: 6px solid var(--gold);
+            border-radius: 15px;
+            height: 140px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 10px 20px rgba(0,0,0,0.3), 0 0 25px rgba(255, 215, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        /* Shadow overlays for round slot machine effect */
+        .roller-container::before, .roller-container::after {
+            content: ''; position: absolute; left: 0; right: 0; height: 35px; z-index: 5;
+            pointer-events: none;
+        }
+        .roller-container::before { top: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); }
+        .roller-container::after { bottom: 0; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); }
+        
+        /* Integrated Timer Overlay ON the Roller */
+        .timer-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .timer-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .timer-label {
+            font-size: 0.9rem;
+            color: #fff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: -5px;
+        }
+
+        .timer-box {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--gold-light);
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* The moving names */
+        .roller-inner {
+            list-style: none;
+            transition: transform 5.5s cubic-bezier(0.1, 0.7, 0.1, 1);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .roller-item {
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 1.6rem;
+            font-weight: 800;
+            border-bottom: 1px solid #ddd;
+            background: #fff;
+        }
+        .roller-item span.phone { 
+            font-size: 1.1rem; 
+            color: #444; 
+            font-weight: 600;
+            margin-top: 5px;
+            background: #eee;
+            padding: 2px 10px;
+            border-radius: 10px;
+        }
+
+        /* Winner Section */
+        .trophy { font-size: 5rem; margin-bottom: 10px; animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .winner-name { font-size: 2.2rem; color: var(--gold); font-weight: 800; margin-bottom: 10px; text-transform: uppercase;}
+        .winner-phone { font-size: 1.5rem; color: #fff; background: rgba(0,0,0,0.5); padding: 5px 20px; border-radius: 20px; display: inline-block; border: 1px solid var(--gold);}
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        /* Admin Panel */
+        #admin-panel {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+            z-index: 100;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+        .admin-controls { display: flex; gap: 10px; margin-top: 10px; }
+        .admin-controls input { margin-bottom: 0; font-size: 1rem; padding: 10px; border-radius: 5px;}
+        .admin-controls button { font-size: 1rem; padding: 10px; border-radius: 5px; cursor: pointer; border: none; font-weight: bold;}
+        .admin-title { color: var(--gold); font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px;}
+
+    </style>
+</head>
+<body>
+
+    <div class="decorations"></div>
+    <div class="lantern lantern-left">🏮</div>
+    <div class="lantern lantern-right">🏮</div>
+
+    <div class="container">
+        <h1>Eid Giveaway 🌙</h1>
+        <p class="subtitle" id="status-text">Register now to win a special Eid gift!</p>
+
+        <!-- 1. Registration Section -->
+        <div id="registration-sec" class="section active">
+            <input type="text" id="userName" placeholder="Enter Your Full Name" required>
+            <input type="tel" id="userPhone" placeholder="Enter Mobile Number (e.g., 03001234567)" required>
+            <button class="btn-primary" id="btn-apply" onclick="submitEntry()">Apply for Giveaway</button>
+            <p id="reg-message" style="margin-top: 15px; color: var(--gold); font-weight: bold; display: none;"></p>
+        </div>
+
+        <!-- 2. Integrated Timer & Roller Section -->
+        <div id="machine-sec" class="section">
+            <div class="machine-title">Live Draw Machine</div>
+            
+            <div class="roller-container">
+                <!-- Overlay Timer that sits ON top of the roller -->
+                <div class="timer-overlay" id="timer-overlay">
+                    <div class="timer-label">Rolling Starts In</div>
+                    <div class="timer-box" id="timer-display">00:00</div>
+                </div>
+
+                <!-- The Actual Spinning Names -->
+                <ul class="roller-inner" id="roller-list">
+                    <!-- Dynamic Users injected by JS -->
+                </ul>
+            </div>
+            <p style="color: #ccc; font-size: 0.9rem;" id="machine-footer-text">Waiting for the countdown to finish...</p>
+        </div>
+
+        <!-- 3. Winner Section -->
+        <div id="winner-sec" class="section">
+            <div class="trophy">🏆</div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 10px;">And the Winner is...</h2>
+            <div class="winner-name" id="win-name">---</div>
+            <div class="winner-phone" id="win-phone">---</div>
+            <p style="margin-top: 20px; font-size: 1.3rem; color: var(--gold); font-weight: bold;">Eid Mubarak! ✨</p>
+        </div>
+    </div>
+
+    <!-- Admin Panel (Only visible if ?admin=true is in URL) -->
+    <div id="admin-panel">
+        <div class="admin-title">👑 Admin Control Panel <span style="font-size: 0.8rem; color: #aaa; float: right;" id="admin-user-count">Users: 0</span></div>
+        <div class="admin-controls">
+            <input type="number" id="admin-minutes" placeholder="Mins" style="width: 80px;" value="1">
+            <button onclick="adminStartTimer()" style="background: #2196F3; color: white; flex: 1;">Set Timer</button>
+            <button onclick="adminRollWinner()" style="background: #4CAF50; color: white; flex: 1;">Spin Roller!</button>
+            <button onclick="adminReset()" style="background: #f44336; color: white;">Reset All</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Modular v9) -->
+    <script type="module">
+        // IMPORT REMOVE FUNCTION ADDED HERE
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue, update, set, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkMRkTzLHZZln2lS0ilIs3GXUQB5tPlSs",
+            databaseURL: "https://give-away-dcc33-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Global Variables
+        let usersData = {};
+        let currentState = 'registration';
+        let countdownInterval;
+        let isRegisteredLocally = localStorage.getItem('giveaway_registered') === 'true';
+
+        // Admin Mode Check
+        const urlParams = new URLSearchParams(window.location.search);
+        const isAdmin = urlParams.get('admin') === 'true';
+        if (isAdmin) {
+            document.getElementById('admin-panel').style.display = 'block';
+        }
+
+        // ==========================================
+        // 1. FIREBASE LISTENERS (REALTIME SYNC)
+        // ==========================================
+
+        // Listen to Users Data
+        onValue(ref(db, 'users'), (snapshot) => {
+            if (snapshot.exists()) {
+                usersData = snapshot.val();
+                if(isAdmin) {
+                    document.getElementById('admin-user-count').innerText = `Users: ${Object.keys(usersData).length}`;
+                }
+            } else {
+                // -> AUTOMATIC CLEAR LOGIC:
+                // If the snapshot doesn't exist, it means the Admin deleted all users.
+                usersData = {};
+                if(isAdmin) document.getElementById('admin-user-count').innerText = `Users: 0`;
+
+                // 1. Clear local browser memory so they are allowed to register again
+                localStorage.removeItem('giveaway_registered');
+                isRegisteredLocally = false;
+
+                // 2. Automatically clear input boxes to make them blank
+                document.getElementById('userName').value = '';
+                document.getElementById('userPhone').value = '';
+
+                // 3. If they are looking at the registration page, instantly show the form again
+                if (currentState === 'registration') {
+                    document.getElementById('userName').style.display = 'block';
+                    document.getElementById('userPhone').style.display = 'block';
+                    document.getElementById('btn-apply').style.display = 'block';
+                    document.getElementById('reg-message').style.display = 'none';
+                }
+            }
+        });
+
+        // Listen to Giveaway State
+        onValue(ref(db, 'state'), (snapshot) => {
+            let data = snapshot.val();
+            if (!data) {
+                if(isAdmin) set(ref(db, 'state'), { status: 'registration', timerEnd: 0, winner: null });
+                return;
+            }
+
+            currentState = data.status;
+            
+            // Handle UI based on state
+            if (currentState === 'registration') {
+                showSection('registration-sec');
+                document.getElementById('status-text').innerText = "Register now to win a special Eid gift!";
+                
+                if(isRegisteredLocally) {
+                    document.getElementById('userName').style.display = 'none';
+                    document.getElementById('userPhone').style.display = 'none';
+                    document.getElementById('btn-apply').style.display = 'none';
+                    document.getElementById('reg-message').style.display = 'block';
+                    document.getElementById('reg-message').innerText = "✅ You are registered! Waiting for admin to start the timer.";
+                } else {
+                    document.getElementById('userName').style.display = 'block';
+                    document.getElementById('userPhone').style.display = 'block';
+                    document.getElementById('btn-apply').style.display = 'block';
+                    document.getElementById('reg-message').style.display = 'none';
+                }
+            } 
+            else if (currentState === 'countdown') {
+                showSection('machine-sec');
+                document.getElementById('status-text').innerText = "Entries Locked! Get Ready.";
+                document.getElementById('machine-footer-text').innerText = "Timer is running...";
+                
+                // Show Timer Overlay ON Roller
+                document.getElementById('timer-overlay').classList.remove('hidden');
+                
+                startLocalCountdown(data.timerEnd);
+            }
+            else if (currentState === 'rolling') {
+                showSection('machine-sec');
+                document.getElementById('status-text').innerText = "Good Luck!";
+                document.getElementById('machine-footer-text').innerText = "Spinning live...";
+                
+                // Hide Timer Overlay to reveal Roller
+                document.getElementById('timer-overlay').classList.add('hidden');
+                
+                triggerRollerAnimation(data.winner);
+            }
+            else if (currentState === 'finished') {
+                showSection('winner-sec');
+                document.getElementById('status-text').innerText = "Giveaway Ended!";
+                if(data.winner) {
+                    document.getElementById('win-name').innerText = data.winner.name;
+                    document.getElementById('win-phone').innerText = data.winner.phone;
+                    triggerConfetti();
+                }
+            }
+        });
+
+        // ==========================================
+        // 2. USER FUNCTIONS
+        // ==========================================
+        window.submitEntry = function() {
+            const name = document.getElementById('userName').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
+
+            if (!name || !phone) {
+                alert("Please enter both Name and Phone Number.");
+                return;
+            }
+
+            // Push to Firebase
+            push(ref(db, 'users'), {
+                name: name,
+                phone: phone,
+                timestamp: Date.now()
+            }).then(() => {
+                localStorage.setItem('giveaway_registered', 'true');
+                isRegisteredLocally = true;
+                
+                document.getElementById('userName').style.display = 'none';
+                document.getElementById('userPhone').style.display = 'none';
+                document.getElementById('btn-apply').style.display = 'none';
+                document.getElementById('reg-message').style.display = 'block';
+                document.getElementById('reg-message').innerText = "✅ Registration Successful! Please stay on this page.";
+            }).catch((error) => {
+                alert("Error registering. Please try again.");
+                console.error(error);
+            });
+        };
+
+        // ==========================================
+        // 3. ADMIN FUNCTIONS
+        // ==========================================
+        window.adminStartTimer = function() {
+            const mins = parseFloat(document.getElementById('admin-minutes').value);
+            if (isNaN(mins) || mins <= 0) return alert("Enter valid minutes");
+            
+            const endTime = Date.now() + (mins * 60 * 1000);
+            update(ref(db, 'state'), {
+                status: 'countdown',
+                timerEnd: endTime,
+                winner: null
+            });
+        };
+
+        window.adminRollWinner = function() {
+            const keys = Object.keys(usersData);
+            if (keys.length === 0) return alert("No users registered yet!");
+
+            // Pick a random winner
+            const randomKey = keys[Math.floor(Math.random() * keys.length)];
+            const winningUser = usersData[randomKey];
+
+            // Set state to rolling -> This fades out the timer and triggers the spin!
+            update(ref(db, 'state'), {
+                status: 'rolling',
+                winner: winningUser
+            });
+
+            // After 5.5s spin animation, show the Winner Screen
+            setTimeout(() => {
+                update(ref(db, 'state'), { status: 'finished' });
+            }, 5500); 
+        };
+
+        window.adminReset = function() {
+            // ADMIN RESET HAS BEEN UPDATED TO DELETE ALL DATA
+            if(confirm("Are you sure? This will DELETE all users' data and start a completely new round.")) {
+                
+                // 1. Delete all users from the Database
+                remove(ref(db, 'users'));
+
+                // 2. Change screens for everyone back to the Registration Page
+                update(ref(db, 'state'), {
+                    status: 'registration',
+                    timerEnd: 0,
+                    winner: null
+                });
+            }
+        };
+
+        // ==========================================
+        // 4. HELPER & UI FUNCTIONS
+        // ==========================================
+
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function startLocalCountdown(endTime) {
+            clearInterval(countdownInterval);
+            
+            countdownInterval = setInterval(() => {
+                const now = Date.now();
+                const diff = endTime - now;
+
+                if (diff <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('timer-display').innerText = "00:00";
+                    document.getElementById('machine-footer-text').innerText = "Waiting for Admin to click Spin!";
+                    return;
+                }
+
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('timer-display').innerText = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function triggerRollerAnimation(winner) {
+            const rollerList = document.getElementById('roller-list');
+            rollerList.innerHTML = ''; // clear previous list
+            
+            // Remove CSS transition temporarily to reset start position instantly
+            rollerList.style.transition = 'none';
+            rollerList.style.transform = 'translateY(0)';
+
+            const userKeys = Object.keys(usersData);
+            
+            // Create 35 fake slots for the spinning effect
+            const totalSpins = 35;
+            
+            for (let i = 0; i < totalSpins - 1; i++) {
+                let randomUser = {name: "Loading...", phone: "03000000000"};
+                if(userKeys.length > 0) {
+                    randomUser = usersData[userKeys[Math.floor(Math.random() * userKeys.length)]];
+                }
+                const li = document.createElement('li');
+                li.className = 'roller-item';
+                li.innerHTML = `${randomUser.name} <span class="phone">${randomUser.phone}</span>`;
+                rollerList.appendChild(li);
+            }
+
+            // The actual winner is exactly the LAST item
+            const winLi = document.createElement('li');
+            winLi.className = 'roller-item';
+            winLi.style.background = '#FFEA70'; // Gold highlight background
+            winLi.innerHTML = `🏆 ${winner.name} <span class="phone">${winner.phone}</span>`;
+            rollerList.appendChild(winLi);
+
+            // Force DOM reflow to apply the reset position before we start moving
+            void rollerList.offsetWidth;
+
+            // Re-apply transition and move to the very bottom item
+            rollerList.style.transition = 'transform 5s cubic-bezier(0.1, 0.7, 0.1, 1)';
+            const itemHeight = 140; // Exact match to CSS .roller-item height
+            const stopPosition = -((totalSpins - 1) * itemHeight);
+            rollerList.style.transform = `translateY(${stopPosition}px)`;
+        }
+
+        function triggerConfetti() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+    </script>
+</body>
+</html>
