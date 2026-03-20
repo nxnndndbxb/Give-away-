@@ -194,10 +194,10 @@
         }
 
         .timer-box {
-            font-size: 3.5rem;
+            font-size: 2.8rem; /* Scaled down slightly to perfectly fit HH:MM:SS */
             font-weight: 800;
             color: var(--gold-light);
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
             font-variant-numeric: tabular-nums;
         }
@@ -291,7 +291,7 @@
                 <!-- Overlay Timer that sits ON top of the roller -->
                 <div class="timer-overlay" id="timer-overlay">
                     <div class="timer-label">Rolling Starts In</div>
-                    <div class="timer-box" id="timer-display">00:00</div>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
                 </div>
 
                 <!-- The Actual Spinning Names -->
@@ -316,7 +316,7 @@
     <div id="admin-panel">
         <div class="admin-title">👑 Admin Control Panel <span style="font-size: 0.8rem; color: #aaa; float: right;" id="admin-user-count">Users: 0</span></div>
         <div class="admin-controls">
-            <input type="number" id="admin-minutes" placeholder="Mins" style="width: 80px;" value="1">
+            <input type="number" id="admin-minutes" placeholder="Mins" style="width: 100px;" value="2000">
             <button onclick="adminStartTimer()" style="background: #2196F3; color: white; flex: 1;">Set Timer</button>
             <button onclick="adminRollWinner()" style="background: #4CAF50; color: white; flex: 1;">Spin Roller!</button>
             <button onclick="adminReset()" style="background: #f44336; color: white;">Reset All</button>
@@ -325,7 +325,6 @@
 
     <!-- Firebase SDK (Modular v9) -->
     <script type="module">
-        // IMPORT REMOVE FUNCTION ADDED HERE
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, update, set, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
@@ -513,9 +512,7 @@
         };
 
         window.adminReset = function() {
-            // ADMIN RESET HAS BEEN UPDATED TO DELETE ALL DATA
             if(confirm("Are you sure? This will DELETE all users' data and start a completely new round.")) {
-                
                 // 1. Delete all users from the Database
                 remove(ref(db, 'users'));
 
@@ -537,6 +534,7 @@
             document.getElementById(id).classList.add('active');
         }
 
+        // --- UPDATED COUNTDOWN TIMER WITH HOURS, MINUTES, SECONDS ---
         function startLocalCountdown(endTime) {
             clearInterval(countdownInterval);
             
@@ -546,16 +544,20 @@
 
                 if (diff <= 0) {
                     clearInterval(countdownInterval);
-                    document.getElementById('timer-display').innerText = "00:00";
+                    document.getElementById('timer-display').innerText = "00:00:00";
                     document.getElementById('machine-footer-text').innerText = "Waiting for Admin to click Spin!";
                     return;
                 }
 
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                // Math to calculate total hours, remaining minutes, and seconds
+                const totalSeconds = Math.floor(diff / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
 
+                // Output Format: HH:MM:SS
                 document.getElementById('timer-display').innerText = 
-                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }, 1000);
         }
 
