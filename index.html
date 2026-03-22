@@ -2,661 +2,1322 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eid Mubarak Live Giveaway 🌙</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- Confetti JS -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Egg Tycoon - Digital Farm</title>
+    
+    <!-- Website Favicon -->
+    <link rel="icon" href="https://iili.io/qXDUeyJ.png" type="image/png">
+    
+    <!-- Three.js Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <style>
-        :root {
-            --primary-bg: #06402B; /* Deep Eid Green */
-            --secondary-bg: #032116;
-            --gold: #FFD700;
-            --gold-light: #FFEA70;
-            --text-light: #ffffff;
-        }
-
+        /* --- General Reset & Setup --- */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: radial-gradient(circle at top, var(--primary-bg), var(--secondary-bg));
-            color: var(--text-light);
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Background Decorations */
-        .decorations {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0));
-            background-repeat: repeat;
-            background-size: 200px 200px;
-            opacity: 0.3;
-        }
-        
-        .lantern {
-            position: absolute;
-            top: -20px;
-            font-size: 4rem;
-            animation: swing 3s ease-in-out infinite alternate;
-            z-index: 1;
-        }
-        .lantern-left { left: 10%; }
-        .lantern-right { right: 10%; animation-delay: 1.5s; }
-
-        @keyframes swing {
-            0% { transform: rotate(5deg); }
-            100% { transform: rotate(-5deg); }
-        }
-
-        /* Main Container */
-        .container {
-            position: relative;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 215, 0, 0.3);
-            border-radius: 20px;
-            padding: 40px;
-            width: 90%;
-            max-width: 550px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        }
-
-        h1 {
-            font-family: 'Amiri', serif;
-            color: var(--gold);
-            font-size: 2.8rem;
-            margin-bottom: 5px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-        }
-        
-        p.subtitle {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: #ddd;
-        }
-
-        .deadline-banner {
-            background: rgba(255, 0, 0, 0.2);
-            border: 1px solid #ff4c4c;
-            color: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            box-shadow: 0 0 10px rgba(255, 76, 76, 0.3);
-        }
-
-        /* State Sections */
-        .section {
-            display: none;
-            animation: fadeIn 0.5s forwards;
-        }
-        .section.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Form Elements */
-        input, select {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            border: 2px solid rgba(255, 215, 0, 0.5);
-            background: rgba(0, 0, 0, 0.3);
-            color: white;
-            font-size: 1.1rem;
-            outline: none;
-            text-align: center;
-            transition: 0.3s;
-        }
-        select {
-            appearance: none;
-            cursor: pointer;
-        }
-        select option {
-            background: var(--primary-bg);
-            color: white;
-        }
-        input:focus, select:focus { border-color: var(--gold); background: rgba(0, 0, 0, 0.5); }
-        
-        button.btn-primary {
-            width: 100%;
-            padding: 15px;
-            border-radius: 10px;
-            border: none;
-            background: linear-gradient(45deg, var(--gold), #FFA500);
-            color: #000;
-            font-weight: 800;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
-            transition: 0.3s;
-        }
-        button.btn-primary:hover { transform: scale(1.03); }
-
-        /* Roller Machine Section */
-        .machine-title {
-            color: var(--gold);
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .roller-container {
-            background: #fff;
-            border: 6px solid var(--gold);
-            border-radius: 15px;
-            height: 140px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 10px 20px rgba(0,0,0,0.3), 0 0 25px rgba(255, 215, 0, 0.2);
-            margin-bottom: 20px;
-        }
-        
-        /* Shadow overlays for round slot machine effect */
-        .roller-container::before, .roller-container::after {
-            content: ''; position: absolute; left: 0; right: 0; height: 35px; z-index: 5;
-            pointer-events: none;
-        }
-        .roller-container::before { top: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); }
-        .roller-container::after { bottom: 0; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); }
-        
-        /* Integrated Timer Overlay ON the Roller */
-        .timer-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.5s ease;
-        }
-        .timer-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .timer-label {
-            font-size: 0.9rem;
-            color: #fff;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: -5px;
-        }
-
-        .timer-box {
-            font-size: 2.8rem;
-            font-weight: 800;
-            color: var(--gold-light);
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-            font-variant-numeric: tabular-nums;
-        }
-
-        /* The moving names */
-        .roller-inner {
-            list-style: none;
-            transition: transform 5.5s cubic-bezier(0.1, 0.7, 0.1, 1);
+            min-height: 100dvh;
             margin: 0;
-            padding: 0;
+            overscroll-behavior: none;
         }
-        
-        .roller-item {
-            height: 140px;
+
+        .app {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            height: 100dvh;
+            max-height: 850px;
+            background-color: #fff;
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #000;
-            font-size: 1.4rem;
-            font-weight: 800;
-            border-bottom: 1px solid #ddd;
-            background: #fff;
-            padding: 0 10px;
-        }
-        .roller-item span.account-details { 
-            font-size: 1rem; 
-            color: #444; 
-            font-weight: 600;
-            margin-top: 5px;
-            background: #eee;
-            padding: 3px 12px;
-            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
 
-        /* Winner Section */
-        .trophy { font-size: 5rem; margin-bottom: 10px; animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .winner-name { font-size: 2.2rem; color: var(--gold); font-weight: 800; margin-bottom: 10px; text-transform: uppercase;}
-        .winner-account { font-size: 1.2rem; color: #fff; background: rgba(0,0,0,0.5); padding: 8px 20px; border-radius: 20px; display: inline-block; border: 1px solid var(--gold);}
-
-        @keyframes popIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-        }
-
-        /* Admin Panel */
-        #admin-panel {
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #a2d5fa, #8ae02d);
+            z-index: 50;
             display: none;
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #111;
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px solid var(--gold);
-            z-index: 100;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            flex-direction: column;
         }
-        .admin-controls { display: flex; gap: 10px; margin-top: 10px; }
-        .admin-controls input { margin-bottom: 0; font-size: 1rem; padding: 10px; border-radius: 5px;}
-        .admin-controls button { font-size: 1rem; padding: 10px; border-radius: 5px; cursor: pointer; border: none; font-weight: bold;}
-        .admin-title { color: var(--gold); font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px;}
+        .screen.active { display: flex; }
 
+        .page-header {
+            background-color: #fff;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        .back-btn { font-size: 24px; cursor: pointer; color: #333; }
+        .history-btn-top { font-size: 14px; color: #1b35a3; cursor: pointer; font-weight: bold; }
+
+        .header {
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            height: 55px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            z-index: 20;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* --- DAY/NIGHT CYCLE SKY AREA --- */
+        .top-sky-area {
+            position: relative;
+            height: 280px;
+            min-height: 280px;
+            z-index: 10;
+            overflow: hidden;
+            transition: background 2s ease-in-out;
+        }
+        .sky-day { background: linear-gradient(to bottom, #4ea1f3 0%, #a2d5fa 60%, #8ae02d 100%); }
+        .sky-night { background: linear-gradient(to bottom, #09152b 0%, #172d54 60%, #1e3f1c 100%); }
+        
+        /* Sun and Moon Elements */
+        .celestial-sun {
+            position: absolute; top: 15px; right: 25px; width: 60px; height: 60px;
+            background: radial-gradient(circle, #fffdf2, #ffeb3b);
+            border-radius: 50%; box-shadow: 0 0 35px #ffeb3b; z-index: 4;
+            transition: opacity 1s;
+        }
+        .celestial-moon {
+            position: absolute; top: 15px; right: 25px; width: 50px; height: 50px;
+            background: radial-gradient(circle at 30% 30%, #fff, #b0c4de);
+            border-radius: 50%; box-shadow: 0 0 25px #fff; z-index: 4;
+            transition: opacity 1s;
+        }
+
+        .scenic-bg {
+            position: absolute; bottom: -5px; width: 100%; display: flex; justify-content: center;
+            align-items: flex-end; z-index: 5; padding-left: 10px;
+        }
+        .scenic-warehouse { font-size: 110px; filter: drop-shadow(0px 8px 4px rgba(0,0,0,0.3)); margin-right: -15px; z-index: 1; }
+        .scenic-hen { font-size: 110px; filter: drop-shadow(0px 8px 4px rgba(0,0,0,0.3)); z-index: 2; margin-right: 5px;}
+        .scenic-egg-wrapper { z-index: 3; margin-left: 6px; display: flex; align-items: flex-end; padding-bottom: 10px; }
+
+        .blue-egg-3d {
+            display: inline-block; width: 1em; height: 1.4em;
+            background: radial-gradient(circle at 30% 30%, #d4f0ff 0%, #3498db 50%, #0a2463 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.4), 0 4px 5px rgba(0,0,0,0.4);
+        }
+
+        .top-bar { position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-evenly; padding: 0 5px; z-index: 15; }
+        .pill { background: #fff; border-radius: 20px; height: 32px; display: flex; align-items: center; position: relative; font-weight: 800; font-size: 13px; box-shadow: 0 3px 6px rgba(0,0,0,0.2); min-width: 95px; padding-left: 25px; justify-content: center; cursor: pointer; border: 1px solid #eee; }
+        .pill.profit { background: #e3f2fd; color: #1e3c72; width: 105px; padding-left: 15px;}
+        .pill.base { color: #2e7d32; width: 100px; padding-left: 10px; }
+        .pill.diamond { color: #1565c0; width: 100px; padding-left: 10px; }
+        .pill .icon-left { position: absolute; left: -8px; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; border: 2px solid #fff; box-shadow: 0 3px 5px rgba(0,0,0,0.2); }
+        .pill.profit .icon-left { background: #fff; left: -12px;}
+        .pill.base .icon-left { background: linear-gradient(135deg, #60c39f, #2e7d32); color: white; font-size: 20px; }
+        .pill.diamond .icon-left { background: #fff; font-size: 22px; }
+        .pill .add-btn { position: absolute; right: -2px; width: 26px; height: 26px; background: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid #ccc; color: #555; font-size: 18px; font-weight: bold; }
+        .tag { position: absolute; bottom: -12px; background: #222; color: #fff; font-size: 9px; padding: 3px 8px; border-radius: 10px; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+
+        .btn { position: absolute; display: flex; flex-direction: column; align-items: center; color: #fff; font-weight: 800; font-size: 12px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); z-index: 10; text-align: center; line-height: 1.2; cursor: pointer; transition: filter 0.1s; }
+        .btn:active { filter: brightness(0.8); }
+        .btn .circle { width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; border: 3px solid #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.4); margin-bottom: 4px; }
+        .btn-withdraw { top: 75px; left: 15px; }
+        .btn-withdraw .circle { background: linear-gradient(135deg, #a25df5, #622ad3); }
+        .btn-oasis { top: 170px; left: 15px; }
+        .btn-oasis .circle { background: linear-gradient(135deg, #4ac6ed, #1f94c9); font-size: 26px;}
+        .btn-invite { top: 75px; right: 15px; } 
+        .btn-invite .circle { background: linear-gradient(135deg, #446bf2, #1b35a3); }
+        .btn-job { top: 170px; right: 15px; }
+        .btn-job .circle { background: linear-gradient(135deg, #44dfb6, #14a47a); }
+
+        .floor-scroll-container { flex-grow: 1; overflow-y: auto; background-color: #27ae60; border-top: 4px solid #1e8449; position: relative;}
+        .floor-scroll-container::-webkit-scrollbar { width: 6px; }
+        .floor-scroll-container::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.3); border-radius: 10px; }
+
+        .floor-box { position: relative; height: 180px; background: linear-gradient(to bottom, #4ea1f3 0%, #a2d5fa 100%); border-bottom: 6px solid #229954; box-shadow: inset 0 10px 10px -10px rgba(0,0,0,0.4); display: flex; flex-direction: column; overflow: hidden; }
+        .floor-divider { background: linear-gradient(to right, #1f94c9, #1b35a3); color: #fff; font-size: 13px; font-weight: 900; padding: 6px 15px; border-bottom: 2px solid #111; display: flex; justify-content: space-between; z-index: 5; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+
+        @keyframes floatClouds {
+            0% { transform: translateX(-30px); }
+            50% { transform: translateX(30px); }
+            100% { transform: translateX(-30px); }
+        }
+        .cloud-element { position: absolute; font-size: 24px; color: #fff; opacity: 0.85; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.1)); animation: floatClouds 20s ease-in-out infinite; z-index: 0; pointer-events: none; }
+        .c-1 { top: 35px; left: 10%; animation-duration: 22s; }
+        .c-2 { top: 50px; left: 55%; font-size: 32px; animation-duration: 28s; animation-direction: reverse; }
+        .c-3 { top: 40px; left: 80%; animation-duration: 18s; font-size: 20px; }
+
+        .floor-3d-canvas { position: absolute; bottom: 0; left: 0; width: 100%; height: 145px; z-index: 1; pointer-events: none; }
+        
+        .eggs-container { position: absolute; bottom: 15px; right: 20px; display: flex; flex-direction: row-reverse; flex-wrap: wrap-reverse; gap: 8px; z-index: 10; pointer-events: auto; max-width: 65%; justify-content: flex-start; }
+        .single-floor-egg { width: 18px; height: 25px; background: radial-gradient(circle at 30% 30%, #d4f0ff, #3498db, #0a2463); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; box-shadow: inset -2px -2px 6px rgba(0,0,0,0.4); cursor: pointer; transition: filter 0.2s; position: relative; }
+        .single-floor-egg::after { content: ''; position: absolute; bottom: -3px; left: 10%; width: 80%; height: 5px; background: rgba(0,0,0,0.5); border-radius: 50%; z-index: -1; filter: blur(1.5px); }
+        .single-floor-egg:active { filter: brightness(1.2); }
+
+        .locked-overlay { position: absolute; top: 25px; left: 0; width: 100%; height: calc(100% - 25px); background: rgba(0,0,0,0.6); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; pointer-events: auto; }
+        .adopt-btn { background: linear-gradient(135deg, #4ac6ed, #1b35a3); color: #fff; font-weight: 900; font-size: 15px; padding: 10px 25px; border-radius: 25px; border: 3px solid #fff; cursor: pointer; margin-top: 10px; box-shadow: 0 5px 10px rgba(0,0,0,0.5); transition: filter 0.1s; }
+        .adopt-btn:active { filter: brightness(0.8); }
+
+        .bottom-nav { background: linear-gradient(to bottom, #7ab929, #5a961b); height: 85px; display: flex; justify-content: space-around; align-items: center; border-top: 3px solid #222; position: relative; z-index: 20; }
+        .bottom-nav::before { content: ''; position: absolute; top: 50%; transform: translateY(-50%); width: 100%; height: 8px; background: #e0a500; border-top: 2px solid #222; border-bottom: 2px solid #222; z-index: 0; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: white; font-weight: 800; font-size: 12px; z-index: 1; position: relative; cursor: pointer; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
+        .nav-icon { width: 50px; height: 50px; background: linear-gradient(135deg, #4477ec, #1938a1); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; border: 2.5px solid #fff; margin-bottom: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.4);}
+        .nav-item.theft .nav-icon { background: linear-gradient(135deg, #ff8a00, #d93d00); }
+
+        .form-container { padding: 20px; overflow-y: auto; flex-grow: 1; background: linear-gradient(to bottom, #a2d5fa, #8ae02d) !important; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 14px; font-weight: bold; color: #555; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(255,255,255,0.8);}
+        .input-field { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; outline: none; transition: border 0.3s; background:#fff;}
+        .input-field:focus { border-color: #4477ec; }
+        .input-field[readonly] { background-color: #eef2f5; color: #1b35a3; font-weight: bold;}
+        
+        .auth-wrapper { flex-grow: 1; overflow-y: auto; padding: 30px 15px 100px 15px; display: flex; flex-direction: column; align-items: center; width: 100%; z-index: 20;}
+        .auth-container { width: 100%; max-width: 360px; background: rgba(255,255,255,0.95); padding: 25px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); position: relative;}
+        .auth-logo { text-align: center; filter: drop-shadow(0 4px 2px rgba(0,0,0,0.3)); margin-bottom: 10px; }
+        .auth-title { text-align: center; color: #1b35a3; font-weight: 900; font-size: 24px; margin-bottom: 20px; }
+        
+        .phone-input-group { display: flex; gap: 10px; }
+        .phone-input-group .input-field { flex-grow: 1; }
+        .captcha-box { display: flex; gap: 10px; align-items: center; }
+        .captcha-text { background: #eef2f5; padding: 12px; border-radius: 8px; font-weight: bold; color: #d84315; font-size: 18px; letter-spacing: 2px; text-align: center; border: 1px dashed #ccc; min-width: 100px;}
+        
+        .auth-link { text-align: center; margin-top: 15px; font-size: 14px; color: #555; font-weight: bold;}
+        .auth-link span { color: #1b35a3; cursor: pointer; text-decoration: underline; }
+        .forgot-link { display: block; text-align: right; color: #d84315; font-size: 13px; font-weight: bold; cursor: pointer; margin-top: -10px; margin-bottom: 10px; text-decoration: underline;}
+        
+        .copyright-footer { position: absolute; bottom: 8px; width: 100%; text-align: center; color: #111; font-size: 11px; z-index: 30; font-weight: 900; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); }
+
+        .address-box { display: flex; align-items: center; background: #eef2f5; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px;}
+        .address-text { flex-grow: 1; font-family: monospace; font-size: 12px; word-break: break-all; color: #333;}
+        .copy-btn { background: #4477ec; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold; margin-left: 10px;}
+        .submit-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #44dfb6, #14a47a); color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: filter 0.1s; }
+        .submit-btn:active { filter: brightness(0.8); }
+        .info-box { background: rgba(255,255,255,0.9); border-left: 4px solid #4477ec; padding: 15px; border-radius: 5px; font-size: 14px; color: #333; margin-bottom: 20px; line-height: 1.5; font-weight: bold;}
+
+        .custom-select-wrapper { position: relative; width: 40%; min-width: 120px; }
+        .custom-select-trigger { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; background: #fff; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .custom-select-trigger::after { content: '▼'; font-size: 10px; }
+        .custom-select-options { position: absolute; top: 105%; left: 0; width: 250%; max-width: 320px; background: #fff; border: 1px solid #ccc; border-radius: 8px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none; }
+        .custom-select-options.open { display: block; }
+        .custom-select-search { width: calc(100% - 20px); margin: 10px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .custom-select-options ul { list-style: none; padding: 0 0 10px 0; margin: 0; max-height: 200px; overflow-y: auto; }
+        .custom-select-options ul li { padding: 10px 15px; cursor: pointer; font-size: 14px; }
+        .custom-select-options ul li:hover { background-color: #f0f0f0; }
+
+        .data-list { list-style: none; padding: 0; }
+        .data-item { background: #fff; margin-bottom: 10px; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee;}
+        .rank-number { font-size: 20px; font-weight: 900; color: #888; width: 30px; }
+        .rank-crown { font-size: 24px; width: 30px; }
+        .hi-info { display: flex; flex-direction: column; gap: 5px; flex-grow: 1; }
+        .hi-title { font-weight: bold; font-size: 15px; color: #333; }
+        .hi-date { font-size: 12px; color: #888; }
+        .hi-status { font-weight: bold; font-size: 13px; padding: 4px 10px; border-radius: 12px; }
+        .status-Pending { background: #fff3cd; color: #856404; }
+        .status-Review { background: #cce5ff; color: #004085; }
+        .status-Approved { background: #d4edda; color: #155724; }
+        
+        .toggle-switch { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2196F3; }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .oasis-header { text-align: center; margin-bottom: 20px; font-weight: bold; color: #1b35a3; }
+        .oasis-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 20px; }
+        .oasis-egg { display:flex; justify-content:center; align-items:center; cursor: pointer; transition: filter 0.1s;}
+        .oasis-egg:active { filter: brightness(0.8); }
+        .oasis-broken { font-size: 35px; text-align: center; opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
+
+        .loading-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:1000; display:none; justify-content:center; align-items:center; font-weight:bold; font-size: 18px; color:#4477ec;}
+
+        .floating-support {
+            position: absolute; bottom: 100px; right: 20px; width: 60px; height: 60px;
+            background: transparent; border: none; display: flex; justify-content: center;
+            align-items: center; z-index: 1000; cursor: pointer; touch-action: none; transition: transform 0.1s;
+        }
+        .floating-support:active { transform: scale(0.95); }
+        .floating-support img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); }
     </style>
 </head>
 <body>
 
-    <div class="decorations"></div>
-    <div class="lantern lantern-left">🏮</div>
-    <div class="lantern lantern-right">🏮</div>
+<div class="app">
+    <div id="loader" class="loading-overlay">Loading...</div>
 
-    <div class="container">
-        <h1>Eid Giveaway 🌙</h1>
-        <p class="subtitle" id="status-text">Register now to win a special Eid gift!</p>
+    <!-- Register Screen -->
+    <div id="screen-register" class="screen active">
+        <div class="auth-wrapper">
+            <div class="auth-container">
+                <div class="auth-logo">
+                    <img src="https://iili.io/qXDUeyJ.png" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                </div>
+                <div class="auth-title">Create Account</div>
+                
+                <div class="form-group"><label>Full Name</label><input type="text" id="reg-name" class="input-field" placeholder="Enter your name"></div>
+                <div class="form-group"><label>Phone Number</label><div class="phone-input-group"><div id="reg-code" class="country-select-custom"></div><input type="tel" id="reg-phone" class="input-field" placeholder="Phone number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div></div>
+                <div class="form-group"><label>Invitation Code</label><input type="text" id="reg-invite" class="input-field" placeholder="Optional" readonly style="background-color: #eef2f5;"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="reg-password" class="input-field" placeholder="Create a password"></div>
+                <div class="form-group"><label>Security Verification</label><div class="captcha-box"><div class="captcha-text" id="reg-captcha-text">4 + 2 = ?</div><input type="number" id="reg-captcha-input" class="input-field" placeholder="Answer"></div></div>
+
+                <button class="submit-btn" onclick="processRegister()">Register Account</button>
+                <div class="auth-link">Already have an account? <span onclick="navToAuth('screen-login')">Login</span></div>
+            </div>
+        </div>
         
-        <!-- Registration Deadline Notice -->
-        <div class="deadline-banner" id="deadline-banner">
-            ⚠️ Roll registration is ended on Eid first day 9:30Am
+        <div class="scenic-bg">
+            <div class="scenic-warehouse">🛖</div><div class="scenic-hen">🐓</div>
+            <div class="scenic-egg-wrapper"><div class="blue-egg-3d" style="font-size: 20px;"></div></div>
+            <div class="scenic-egg-wrapper"><div class="blue-egg-3d" style="font-size: 15px;"></div></div>
+        </div>
+        <div class="copyright-footer">Copyright &copy; 2024 Egg Tycoon. All rights reserved.</div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="screen-login" class="screen">
+        <div class="auth-wrapper">
+            <div class="auth-container">
+                <div class="auth-logo"><img src="https://iili.io/qXDUeyJ.png" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;"></div>
+                <div class="auth-title">Egg Tycoon Login</div>
+                
+                <div class="form-group"><label>Phone Number</label><div class="phone-input-group"><div id="log-code" class="country-select-custom"></div><input type="tel" id="log-phone" class="input-field" placeholder="Phone number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div></div>
+                <div class="form-group"><label>Password</label><input type="password" id="log-password" class="input-field" placeholder="Enter your password"></div>
+                <span class="forgot-link" onclick="navToAuth('screen-forgot')">Forgot Password?</span>
+                <div class="form-group"><label>Security Verification</label><div class="captcha-box"><div class="captcha-text" id="log-captcha-text">5 + 3 = ?</div><input type="number" id="log-captcha-input" class="input-field" placeholder="Answer"></div></div>
+
+                <button class="submit-btn" style="background: linear-gradient(135deg, #446bf2, #1b35a3);" onclick="processLogin()">Login</button>
+                <div class="auth-link">New Farmer? <span onclick="navToAuth('screen-register')">Register Here</span></div>
+            </div>
         </div>
 
-        <!-- 1. Registration Section -->
-        <div id="registration-sec" class="section active">
-            <select id="paymentMethod" required>
-                <option value="" disabled selected>Select Payment Method</option>
-                <option value="Easypaisa">Easypaisa</option>
-                <option value="JazzCash">JazzCash</option>
-            </select>
-            <input type="text" id="holderName" placeholder="Account Holder Name" required>
-            <input type="tel" id="accountNumber" placeholder="Account Number" required>
-            
-            <button class="btn-primary" id="btn-apply" onclick="submitEntry()">Apply for Giveaway</button>
-            <p id="reg-message" style="margin-top: 15px; color: var(--gold); font-weight: bold; display: none;"></p>
+        <div class="scenic-bg">
+            <div class="scenic-warehouse">🛖</div><div class="scenic-hen">🐓</div>
+            <div class="scenic-egg-wrapper"><div class="blue-egg-3d" style="font-size: 20px;"></div></div>
+            <div class="scenic-egg-wrapper"><div class="blue-egg-3d" style="font-size: 15px;"></div></div>
         </div>
+        <div class="copyright-footer">Copyright &copy; 2024 Egg Tycoon. All rights reserved.</div>
+    </div>
 
-        <!-- 2. Integrated Timer & Roller Section -->
-        <div id="machine-sec" class="section">
-            <div class="machine-title">Live Draw Machine</div>
-            
-            <div class="roller-container">
-                <!-- Overlay Timer that sits ON top of the roller -->
-                <div class="timer-overlay" id="timer-overlay">
-                    <div class="timer-label">Rolling Starts In</div>
-                    <div class="timer-box" id="timer-display">00:00:00</div>
+    <!-- Forgot Password Screen -->
+    <div id="screen-forgot" class="screen">
+        <div class="auth-wrapper">
+            <div class="auth-container">
+                <div class="auth-logo"><img src="https://iili.io/qXDUeyJ.png" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;"></div>
+                <div class="auth-title">Reset Password</div>
+                
+                <div class="info-box" style="font-size: 12px; padding: 10px; margin-bottom: 15px; border-left: 3px solid #d84315;">Enter your phone number to receive a secure code on WhatsApp.</div>
+                <div class="form-group"><label>Registered Phone</label><div class="phone-input-group"><div id="fg-code" class="country-select-custom"></div><input type="tel" id="fg-phone" class="input-field" placeholder="Phone number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div></div>
+
+                <div id="fg-step2" style="display:none;">
+                    <div class="form-group"><label>WhatsApp Security Code</label><input type="number" id="fg-otp" class="input-field" placeholder="Enter 6-digit code"></div>
+                    <div class="form-group"><label>New Password</label><input type="password" id="fg-new-pwd" class="input-field" placeholder="Create new password"></div>
                 </div>
 
-                <!-- The Actual Spinning Names -->
-                <ul class="roller-inner" id="roller-list">
-                    <!-- Dynamic Users injected by JS -->
-                </ul>
+                <button class="submit-btn" id="fg-btn-send" style="background: linear-gradient(135deg, #25D366, #128C7E);" onclick="sendWhatsappCode()">Send Code via WhatsApp</button>
+                <button class="submit-btn" id="fg-btn-reset" style="display:none; background: linear-gradient(135deg, #446bf2, #1b35a3);" onclick="processResetPassword()">Reset Password</button>
+                <div class="auth-link">Remembered it? <span onclick="navToAuth('screen-login')">Back to Login</span></div>
             </div>
-            <p style="color: #ccc; font-size: 0.9rem;" id="machine-footer-text">Waiting for the countdown to finish...</p>
+        </div>
+        <div class="scenic-bg">
+            <div class="scenic-warehouse">🛖</div><div class="scenic-hen">🐓</div>
+            <div class="scenic-egg-wrapper"><div class="blue-egg-3d" style="font-size: 20px;"></div></div>
+        </div>
+        <div class="copyright-footer">Copyright &copy; 2024 Egg Tycoon. All rights reserved.</div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- HOME SCREEN (GAME)                         -->
+    <!-- ========================================== -->
+    <div id="screen-home" class="screen" style="background: none;">
+        <div class="header">
+            <img src="https://iili.io/qXDUeyJ.png" alt="Logo" style="width: 28px; height: 28px; margin-right: 8px; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3)); object-fit: contain;"> 
+            Egg Tycoon
         </div>
 
-        <!-- 3. Winner Section -->
-        <div id="winner-sec" class="section">
-            <div class="trophy">🏆</div>
-            <h2 style="font-size: 1.5rem; margin-bottom: 10px;">And the Winner is...</h2>
-            <div class="winner-name" id="win-name">---</div>
-            <div class="winner-account" id="win-account">---</div>
-            <p style="margin-top: 20px; font-size: 1.3rem; color: var(--gold); font-weight: bold;">Eid Mubarak! ✨</p>
+        <div class="top-sky-area sky-day">
+            <!-- Day / Night Cycle Element -->
+            <div id="celestial-body" class="celestial-sun"></div>
+
+            <div id="hen-3d-header-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 4;"></div>
+
+            <div class="scenic-bg">
+                <div class="scenic-warehouse">🛖</div>
+                <div class="scenic-egg-wrapper"><div class="blue-egg-3d" style="font-size: 22px;"></div></div>
+                <div class="scenic-egg-wrapper"><div class="blue-egg-3d" style="font-size: 16px;"></div></div>
+            </div>
+
+            <div class="top-bar">
+                <div class="pill profit" onclick="navTo('screen-withdraw')">
+                    <div class="icon-left"><div class="blue-egg-3d" style="font-size: 16px;"></div></div>
+                    <span id="ui-eggs">0</span>
+                    <div class="tag" style="left: 20px;">PROFIT</div>
+                </div>
+                <div class="pill base" onclick="navTo('screen-deposit')">
+                    <div class="icon-left">₮</div>
+                    <span id="ui-usdt">0.00</span>
+                    <div class="add-btn">⊕</div>
+                    <div class="tag" style="left: 15px;">BASE</div>
+                </div>
+                <div class="pill diamond" onclick="navTo('screen-diamond')">
+                    <div class="icon-left">💎</div>
+                    <span id="ui-diamonds">0</span>
+                    <div class="add-btn">⊕</div>
+                </div>
+            </div>
+
+            <div class="btn btn-withdraw" onclick="navTo('screen-withdraw')"><div class="circle">👛</div>Withdraw</div>
+            <div class="btn btn-oasis" onclick="navTo('screen-oasis'); initOasis();"><div class="circle">🌳</div>Egg<br>Oasis</div>
+            <div class="btn btn-invite" onclick="navTo('screen-diamond')"><div class="circle">🤝</div>Invite</div>
+            <div class="btn btn-job" onclick="navTo('screen-job')"><div class="circle">🏪</div>Job<br>Market</div>
+        </div>
+
+        <div class="floor-scroll-container" id="floors-container"></div>
+
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="navTo('screen-ranking'); loadRanking();"><div class="nav-icon">🏆</div>Ranking</div>
+            <div class="nav-item" onclick="navTo('screen-friends'); loadFriends();"><div class="nav-icon">🤝</div>Friends</div>
+            <div class="nav-item theft" onclick="navTo('screen-social'); loadSocialHistory();"><div class="nav-icon">🎁</div>Bounty</div>
+            <div class="nav-item" onclick="navTo('screen-settings');"><div class="nav-icon" style="background: linear-gradient(135deg, #888, #444);">🛠️</div>Settings</div>
+        </div>
+
+        <div id="floating-support" class="floating-support"><img src="https://iili.io/qwvWVIa.png" alt="Contact Support"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- INNER SCREENS                              -->
+    <!-- ========================================== -->
+
+    <!-- Job Market Screen -->
+    <div id="screen-job" class="screen">
+        <div class="page-header"><span class="back-btn" onclick="navTo('screen-home')">←</span><span>Job Market</span><span></span></div>
+        <div class="form-container">
+            <div class="info-box">Hire an Auto-Collect Bot for <b>$2.00 USDT</b>. It will work 24/7 to automatically collect eggs from your upgraded farms!</div>
+            <div class="data-item" style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size: 40px;">🤖</div>
+                <div style="flex-grow:1; margin-left:15px;">
+                    <div style="font-weight:bold; font-size:18px;">Farm Bot</div>
+                    <div id="bot-status" style="color:#d84315; font-weight:bold;">Inactive</div>
+                </div>
+                <button id="bot-btn" class="submit-btn" style="width:auto; padding:8px 15px; margin:0;" onclick="purchaseBot()">Buy ($2)</button>
+            </div>
         </div>
     </div>
 
-    <!-- Admin Panel (Only visible if ?admin=true is in URL) -->
-    <div id="admin-panel">
-        <div class="admin-title">👑 Admin Control Panel <span style="font-size: 0.8rem; color: #aaa; float: right;" id="admin-user-count">Users: 0</span></div>
-        <div class="admin-controls">
-            <input type="number" id="admin-minutes" placeholder="Mins" style="width: 100px;" value="2000">
-            <button onclick="adminStartTimer()" style="background: #2196F3; color: white; flex: 1;">Set Timer</button>
-            <button onclick="adminRollWinner()" style="background: #4CAF50; color: white; flex: 1;">Spin Roller!</button>
-            <button onclick="adminReset()" style="background: #f44336; color: white;">Reset All</button>
+    <!-- Social Rewards Screen (Replaces Theft) -->
+    <div id="screen-social" class="screen">
+        <div class="page-header"><span class="back-btn" onclick="navTo('screen-home')">←</span><span>Social Rewards</span><span></span></div>
+        <div class="form-container">
+            <h3 style="color:#1b35a3; margin-bottom:10px;">Reward History</h3>
+            <ul id="social-history-ul" class="data-list" style="max-height: 150px; overflow-y:auto; margin-bottom: 20px;"></ul>
+            
+            <div class="info-box">Make a video about Egg Tycoon, upload it to any platform below, and submit the link to earn Diamonds!</div>
+            <div class="form-group">
+                <label>Social Platform</label>
+                <select id="soc-platform" class="input-field">
+                    <option>YouTube</option>
+                    <option>TikTok</option>
+                    <option>Instagram</option>
+                    <option>Twitter</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Video Link</label>
+                <input type="text" id="soc-link" class="input-field" placeholder="Paste your link here">
+            </div>
+            <button class="submit-btn" onclick="submitSocialVideo()">Submit for Review</button>
         </div>
     </div>
 
-    <!-- Firebase SDK (Modular v9) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, update, set, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    <!-- Withdraw Screen -->
+    <div id="screen-withdraw" class="screen">
+        <div class="page-header"><span class="back-btn" onclick="navTo('screen-home')">←</span><span>Withdrawal</span><span class="history-btn-top" onclick="loadHistory('withdraw'); navTo('screen-history')">History</span></div>
+        <div class="form-container">
+            <div class="info-box"><b>Exchange Rate:</b> 1 Blue Egg = $0.01 USDT<br><b>Minimum Withdrawal:</b> $2.00 (200 Eggs)</div>
+            <div class="form-group"><label>Enter Eggs Amount</label><input type="number" id="wd-eggs" class="input-field" placeholder="E.g. 250" onkeyup="calcExchange()"></div>
+            <div class="form-group"><label>You Will Receive (USDT)</label><input type="text" id="wd-usdt" class="input-field" value="0.00" readonly></div>
+            <div class="form-group"><label>Select Network</label><select id="wd-network" class="input-field"><option value="USDT TRC20">USDT TRC20</option><option value="USDT BEP20">USDT BEP20</option></select></div>
+            <div class="form-group"><label>Wallet Address</label><input type="text" id="wd-address" class="input-field" placeholder="Paste your address here"></div>
+            <button class="submit-btn" onclick="submitWithdraw()">Submit Withdrawal</button>
+        </div>
+    </div>
 
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDkMRkTzLHZZln2lS0ilIs3GXUQB5tPlSs",
-            databaseURL: "https://give-away-dcc33-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    <!-- Deposit Screen -->
+    <div id="screen-deposit" class="screen">
+        <div class="page-header"><span class="back-btn" onclick="navTo('screen-home')">←</span><span>Deposit Base USDT</span><span class="history-btn-top" onclick="loadHistory('deposit'); navTo('screen-history')">History</span></div>
+        <div class="form-container">
+            <div class="info-box">Please send USDT to the exact address shown below. <b>Minimum Deposit:</b> $1.00</div>
+            <div class="form-group"><label>Select Network</label><select id="dep-network" class="input-field" onchange="updateDepositAddress()"><option value="USDT TRC20">USDT TRC20</option><option value="USDT BEP20">USDT BEP20</option></select></div>
+            <div class="form-group"><label>Company Wallet Address</label><div class="address-box"><span class="address-text" id="dep-address-txt">TKEmWeig1jtWLgPZp4pX4PHAsPsrFNdqf2</span><button class="copy-btn" onclick="copyAddress()">COPY</button></div></div>
+            <div class="form-group"><label>Amount Sent (USDT)</label><input type="number" id="dep-amount" class="input-field" placeholder="Enter amount sent"></div>
+            <div class="form-group"><label>Upload Payment Proof</label><input type="file" id="dep-proof" class="input-field" accept="image/*"></div>
+            <button class="submit-btn" onclick="submitDeposit()">Submit Deposit</button>
+        </div>
+    </div>
+
+    <!-- Diamond / Invites Rules Screen -->
+    <div id="screen-diamond" class="screen">
+        <div class="page-header"><span class="back-btn" onclick="navTo('screen-home')">←</span><span>My Diamonds</span><span></span></div>
+        <div class="form-container" style="text-align: center;">
+            <div style="font-size: 80px; margin: 10px 0;">💎</div>
+            <h2 style="color: #1b35a3; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">Diamond Rewards</h2>
+            <div class="info-box" style="text-align: left;">Earn Diamonds by inviting new members! <br><br>When your referred member upgrades to any <b>Pro Farm</b>, you will automatically receive a <b>15% commission</b> in Diamonds.</div>
+            <button class="submit-btn" style="background: linear-gradient(135deg, #446bf2, #1b35a3);" onclick="copyReferralLink()">Copy Referral Link</button>
+            
+            <div class="info-box" style="margin-top:20px; text-align: left; background:#fff8e1; border-left:4px solid #f5a623;">
+                <b style="color:#d84315;">Exchange Diamonds for Blue Eggs</b><br>
+                <span style="font-size:12px;">Rate: 1 Diamond = 2 Eggs</span><br><br>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <input type="number" id="exchange-diamond-input" class="input-field" placeholder="Amount to exchange" min="1">
+                </div>
+                <button class="submit-btn" style="background: linear-gradient(135deg, #f5a623, #d84315); padding: 10px;" onclick="exchangeDiamonds()">Convert to Eggs</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Screen -->
+    <div id="screen-history" class="screen">
+        <div class="page-header"><span class="back-btn" onclick="navTo('screen-home')">←</span><span id="history-title">History</span><span></span></div>
+        <div class="form-container"><ul id="history-ul" class="data-list"></ul></div>
+    </div>
+
+    <!-- Ranking Screen -->
+    <div id="screen-ranking" class="screen">
+        <div class="page-header"><span class="back-btn" onclick="navTo('screen-home')">←</span><span>Top 10 Ranking</span><span></span></div>
+        <div class="form-container">
+            <div class="info-box" style="text-align:center;">Top Global Egg Farmers 🏆</div>
+            <ul id="ranking-ul" class="data-list"></ul>
+        </div>
+    </div>
+
+    <!-- Friends Screen -->
+    <div id="screen-friends" class="screen">
+        <div class="page-header"><span class="back-btn" onclick="navTo('screen-home')">←</span><span>My Friends</span><span></span></div>
+        <div class="form-container">
+            <div style="text-align: center; font-size: 80px; margin-bottom: 20px;">🤝</div>
+            <div class="data-item">
+                <div class="hi-info"><span class="hi-title">Total Invites</span></div>
+                <div class="hi-status" style="background:#eaf3ff; color:#1b35a3; font-size:18px;" id="ui-invites">0</div>
+            </div>
+            <div class="data-item" style="margin-bottom:20px;">
+                <div class="hi-info"><span class="hi-title">Invitation Earnings</span></div>
+                <div class="hi-status" style="background:#fff8e1; color:#d84315; font-size:18px;" id="ui-invite-earnings">0.00 ₮</div>
+            </div>
+            <button class="submit-btn" style="margin-bottom:25px;" onclick="navTo('screen-diamond')">Invite More Friends</button>
+
+            <h3 style="color:#1b35a3; margin-bottom:10px;">Friend List</h3>
+            <ul id="friends-ul" class="data-list"></ul>
+        </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="screen-settings" class="screen">
+        <div class="page-header"><span class="back-btn" onclick="navTo('screen-home')">←</span><span>Settings</span><span></span></div>
+        <div class="form-container">
+            <div class="toggle-switch">
+                <div style="font-weight:bold; font-size:16px; color:#333;">🎵 Game Sounds</div>
+                <label class="switch"><input type="checkbox" id="sound-toggle" onchange="toggleSound()" checked><span class="slider"></span></label>
+            </div>
+            <div class="info-box">Toggle this switch to turn the beautiful egg popping sound ON or OFF.</div>
+            <button class="submit-btn" style="background: linear-gradient(135deg, #f53d3d, #c91f1f); margin-top: 30px;" onclick="processLogout(true)">Log Out</button>
+        </div>
+    </div>
+
+    <!-- Egg Oasis Screen -->
+    <div id="screen-oasis" class="screen">
+        <div class="page-header"><span class="back-btn" onclick="navTo('screen-home')">←</span><span>Egg Oasis</span><span></span></div>
+        <div class="form-container">
+            <div class="info-box">
+                <b>Pro Users Only!</b><br>
+                A fresh batch of 50 blue eggs drops globally every day. Find and click an available egg to claim it before someone else does!
+            </div>
+            <div class="oasis-header">
+                <h2 style="color:#fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">Remaining Eggs: <span id="oasis-remains" style="color:#ffcf25;">50</span>/50</h2>
+            </div>
+            <div class="oasis-grid" id="oasis-grid"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 3D HEN LOGIC SYSTEM -->
+<script>
+    window.active3DAnimations = window.active3DAnimations || {};
+
+    window.playHenVoice = function() {
+        if(!userData.soundEnabled) return;
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            function makeCluck(timeOffset) {
+                const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(400, ctx.currentTime + timeOffset); osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + timeOffset + 0.1);
+                gain.gain.setValueAtTime(0, ctx.currentTime + timeOffset); gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + timeOffset + 0.02); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.1);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(ctx.currentTime + timeOffset); osc.stop(ctx.currentTime + timeOffset + 0.15);
+            }
+            makeCluck(0); if(Math.random() > 0.5) makeCluck(0.15); 
+        } catch(e) {}
+    };
+
+    function create3DHenModel() {
+        const matBody = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 }); 
+        const matNeck = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.7 }); 
+        const matWing = new THREE.MeshStandardMaterial({ color: 0x1e90ff, roughness: 0.6 }); 
+        const matTail = new THREE.MeshStandardMaterial({ color: 0x00008b, roughness: 0.8 }); 
+        const matRed = new THREE.MeshStandardMaterial({ color: 0x00bfff, roughness: 0.5 }); 
+        const matYellow = new THREE.MeshStandardMaterial({ color: 0xffcc00, roughness: 0.5 }); 
+        const matEyeWhite = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+        const matPupil = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1 });
+        const matGlasses = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1, metalness: 0.5 });
+
+        const hen = new THREE.Group();
+
+        const body = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), matBody);
+        body.scale.set(1, 0.9, 1.2); body.position.y = 1.5; body.castShadow = true; hen.add(body);
+
+        const headGroup = new THREE.Group(); headGroup.position.set(0, 2.3, 1.0); hen.add(headGroup);
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.6, 32, 32), matNeck);
+        head.position.set(0, 0.3, 0.3); head.castShadow = true; headGroup.add(head);
+
+        const combGroup = new THREE.Group();
+        const combGeo = new THREE.SphereGeometry(0.18, 16, 16);
+        for(let i=0; i<3; i++) {
+            const c = new THREE.Mesh(combGeo, matRed); c.position.set(0, 0.8 + (i==1 ? 0.05 : 0), 0.1 + (i*0.2)); c.scale.set(0.5, 1.5, 1); c.castShadow = true; combGroup.add(c);
+        }
+        headGroup.add(combGroup);
+
+        const wattle = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), matRed);
+        wattle.position.set(0, 0, 0.7); wattle.scale.set(0.5, 1.2, 1); wattle.castShadow = true; headGroup.add(wattle);
+
+        const beak = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.6, 16), matYellow);
+        beak.rotation.x = Math.PI / 2; beak.position.set(0, 0.2, 0.9); beak.castShadow = true; headGroup.add(beak);
+
+        function createEye(xPos) {
+            const eyeGroup = new THREE.Group();
+            const eyeWhite = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), matEyeWhite);
+            const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), matPupil);
+            pupil.position.set(xPos > 0 ? 0.08 : -0.08, 0, 0.08); eyeGroup.add(eyeWhite); eyeGroup.add(pupil); eyeGroup.position.set(xPos, 0.4, 0.6); return eyeGroup;
+        }
+        headGroup.add(createEye(0.35)); headGroup.add(createEye(-0.35));
+
+        const glassesGroup = new THREE.Group();
+        const frameGeo = new THREE.TorusGeometry(0.18, 0.03, 8, 24);
+        const leftFrame = new THREE.Mesh(frameGeo, matGlasses); leftFrame.position.set(-0.35, 0.4, 0.65); leftFrame.rotation.y = -0.2;
+        const rightFrame = new THREE.Mesh(frameGeo, matGlasses); rightFrame.position.set(0.35, 0.4, 0.65); rightFrame.rotation.y = 0.2;
+        const bridge = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.35), matGlasses); bridge.rotation.z = Math.PI / 2; bridge.position.set(0, 0.4, 0.72);
+        glassesGroup.add(leftFrame); glassesGroup.add(rightFrame); glassesGroup.add(bridge); headGroup.add(glassesGroup);
+
+        const wingGeo = new THREE.SphereGeometry(0.7, 32, 16);
+        const leftWingGroup = new THREE.Group(); leftWingGroup.position.set(-1.1, 1.7, 0);
+        const leftWing = new THREE.Mesh(wingGeo, matWing); leftWing.scale.set(0.2, 0.6, 0.9); leftWing.position.set(-0.1, -0.3, 0); leftWing.castShadow = true; leftWingGroup.add(leftWing); hen.add(leftWingGroup);
+        const rightWingGroup = new THREE.Group(); rightWingGroup.position.set(1.1, 1.7, 0);
+        const rightWing = new THREE.Mesh(wingGeo, matWing); rightWing.scale.set(0.2, 0.6, 0.9); rightWing.position.set(0.1, -0.3, 0); rightWing.castShadow = true; rightWingGroup.add(rightWing); hen.add(rightWingGroup);
+
+        const tailGroup = new THREE.Group(); tailGroup.position.set(0, 1.6, -1.2);
+        const tailGeo = new THREE.ConeGeometry(0.2, 1.2, 16);
+        for(let i=-1; i<=1; i++) {
+            const t = new THREE.Mesh(tailGeo, matTail); t.rotation.x = -Math.PI / 3; t.rotation.z = i * 0.3; t.position.set(i*0.2, 0, 0); t.castShadow = true; tailGroup.add(t);
+        }
+        hen.add(tailGroup);
+
+        function createLeg(xPos) {
+            const legGroup = new THREE.Group(); legGroup.position.set(xPos, 1.0, 0);
+            const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.06, 0.8, 16), matYellow); leg.position.y = -0.4; leg.castShadow = true; legGroup.add(leg);
+            const footBase = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.1, 0.15), matYellow); footBase.position.y = -0.8; legGroup.add(footBase);
+            const toeGeo = new THREE.CylinderGeometry(0.04, 0.02, 0.4, 8); toeGeo.rotateX(Math.PI / 2);
+            for(let i=-1; i<=1; i++) {
+                const toe = new THREE.Mesh(toeGeo, matYellow); toe.position.set(i*0.15, -0.8, 0.2); toe.rotation.y = i * 0.4; toe.castShadow = true; legGroup.add(toe);
+            }
+            const backToe = new THREE.Mesh(toeGeo, matYellow); backToe.position.set(0, -0.8, -0.15); backToe.rotation.y = Math.PI; backToe.scale.set(1, 1, 0.5); backToe.castShadow = true; legGroup.add(backToe);
+            return legGroup;
+        }
+        const rightLeg = createLeg(0.4); const leftLeg = createLeg(-0.4); hen.add(rightLeg); hen.add(leftLeg);
+        hen.userData = { headGroup, rightWingGroup, leftWingGroup, tailGroup, rightLeg, leftLeg }; return hen;
+    }
+
+    function create2DHenHouse(floorId) {
+        const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 512; const ctx = canvas.getContext('2d');
+        const colors = { 'f1': { base: '#e67e22', roof: '#c0392b' }, 'f2': { base: '#c0392b', roof: '#2c3e50' }, 'f3': { base: '#2980b9', roof: '#d35400' }, 'f4': { base: '#8e44ad', roof: '#27ae60' }, 'f5': { base: '#f1c40f', roof: '#e74c3c' } };
+        const c = colors[floorId] || colors['f1'];
+
+        ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(256, 480, 220, 30, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#7f8c8d'; ctx.fillRect(340, 100, 40, 80); ctx.fillStyle = '#bdc3c7'; ctx.fillRect(330, 90, 60, 20);
+        ctx.fillStyle = c.base; ctx.fillRect(86, 220, 340, 240);
+        ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.lineWidth = 4;
+        for(let i = 250; i < 450; i += 35) { ctx.beginPath(); ctx.moveTo(86, i); ctx.lineTo(426, i); ctx.stroke(); }
+        ctx.fillStyle = '#2c3e50'; ctx.beginPath(); ctx.roundRect(206, 310, 100, 150, [15, 15, 0, 0]); ctx.fill();
+        ctx.fillStyle = '#f1c40f'; ctx.beginPath(); ctx.arc(285, 390, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#87CEEB'; ctx.fillRect(110, 270, 60, 60); ctx.fillRect(340, 270, 60, 60);
+        ctx.strokeStyle = '#ecf0f1'; ctx.lineWidth = 6;
+        ctx.strokeRect(110, 270, 60, 60); ctx.strokeRect(340, 270, 60, 60);
+        ctx.beginPath(); ctx.moveTo(140, 270); ctx.lineTo(140, 330); ctx.stroke(); ctx.beginPath(); ctx.moveTo(110, 300); ctx.lineTo(170, 300); ctx.stroke(); ctx.beginPath(); ctx.moveTo(370, 270); ctx.lineTo(370, 330); ctx.stroke(); ctx.beginPath(); ctx.moveTo(340, 300); ctx.lineTo(400, 300); ctx.stroke();
+        ctx.fillStyle = c.roof; ctx.beginPath(); ctx.moveTo(256, 70); ctx.lineTo(36, 220); ctx.lineTo(476, 220); ctx.fill();
+        ctx.strokeStyle = '#34495e'; ctx.lineWidth = 15; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(256, 70); ctx.lineTo(36, 220); ctx.stroke(); ctx.beginPath(); ctx.moveTo(256, 70); ctx.lineTo(476, 220); ctx.stroke();
+        ctx.fillStyle = '#87CEEB'; ctx.beginPath(); ctx.arc(256, 160, 25, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ecf0f1'; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(256, 160, 25, 0, Math.PI * 2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(256, 135); ctx.lineTo(256, 185); ctx.stroke(); ctx.beginPath(); ctx.moveTo(231, 160); ctx.lineTo(281, 160); ctx.stroke();
+
+        const tex = new THREE.CanvasTexture(canvas); const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide }); const mesh = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 3.5), mat); return mesh;
+    }
+
+    function initHeader3DHen() {
+        const container = document.getElementById('hen-3d-header-container'); if(!container) return;
+        if(window.active3DAnimations['header']) cancelAnimationFrame(window.active3DAnimations['header']);
+        const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 100); camera.position.set(0, 1.2, 5.5);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); renderer.setSize(container.clientWidth, container.clientHeight); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; container.innerHTML = ''; container.appendChild(renderer.domElement);
+        const controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.enableZoom = false; controls.enablePan = false;
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8); dirLight.position.set(5, 10, 5); dirLight.castShadow = true; scene.add(dirLight);
+        const hen = create3DHenModel(); hen.position.set(0, -1.2, 0); hen.scale.set(0.7, 0.7, 0.7); scene.add(hen);
+
+        const clock = new THREE.Clock();
+        function animate() {
+            window.active3DAnimations['header'] = requestAnimationFrame(animate);
+            const time = clock.getElapsedTime(); const walkSpeed = time * 3;
+            hen.position.x = Math.cos(time * 0.5) * 0.5; hen.position.z = Math.sin(time * 0.5) * 0.5; hen.rotation.y = (time * 0.5) + Math.PI;
+            hen.position.y = (Math.abs(Math.sin(walkSpeed)) * 0.15) - 1.2; hen.userData.rightLeg.rotation.x = Math.sin(walkSpeed) * 0.6; hen.userData.leftLeg.rotation.x = Math.sin(walkSpeed + Math.PI) * 0.6; hen.userData.headGroup.rotation.x = Math.sin(walkSpeed) * 0.3; hen.userData.rightWingGroup.rotation.z = Math.abs(Math.sin(walkSpeed)) * 0.3 + 0.1; hen.userData.leftWingGroup.rotation.z = -(Math.abs(Math.sin(walkSpeed)) * 0.3 + 0.1); hen.userData.tailGroup.rotation.y = Math.sin(walkSpeed) * 0.2;
+            renderer.render(scene, camera);
+        }
+        window.addEventListener('resize', () => { if(container.clientWidth > 0) { camera.aspect = container.clientWidth / container.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(container.clientWidth, container.clientHeight); } });
+        animate();
+    }
+
+    function initFloor3D(fId) {
+        const container = document.getElementById('floor-3d-' + fId); if(!container) return;
+        if(window.active3DAnimations[fId]) cancelAnimationFrame(window.active3DAnimations[fId]);
+        const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100); camera.position.set(0, 2.5, 7); camera.lookAt(0, 0.5, 0);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); renderer.setSize(container.clientWidth, container.clientHeight); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; container.innerHTML = ''; container.appendChild(renderer.domElement);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8); dirLight.position.set(5, 10, 5); dirLight.castShadow = true; scene.add(dirLight);
+
+        const canvas2d = document.createElement('canvas'); canvas2d.width = 1024; canvas2d.height = 1024; const ctx2d = canvas2d.getContext('2d');
+        ctx2d.fillStyle = '#1e5622'; ctx2d.fillRect(0, 0, 1024, 1024);
+        for(let i=0; i<40000; i++) { let x = Math.random() * 1024; let y = Math.random() * 1024; let h = 10 + Math.random() * 20; ctx2d.fillStyle = Math.random() > 0.5 ? '#27ae60' : (Math.random() > 0.5 ? '#2ecc71' : '#1e8449'); ctx2d.globalAlpha = 0.8; ctx2d.fillRect(x, y, 2, h); }
+        const flowerColors = ['#ffffff', '#ff99cc', '#ffcc00', '#cc99ff', '#66ccff'];
+        for(let i=0; i<300; i++) { let x = Math.random() * 1024; let y = Math.random() * 1024; let fColor = flowerColors[Math.floor(Math.random() * flowerColors.length)]; ctx2d.globalAlpha = 1.0; ctx2d.fillStyle = fColor; for(let p=0; p<5; p++) { let angle = (p / 5) * Math.PI * 2; ctx2d.beginPath(); ctx2d.arc(x + Math.cos(angle)*6, y + Math.sin(angle)*6, 5, 0, Math.PI*2); ctx2d.fill(); } ctx2d.fillStyle = '#ffaa00'; ctx2d.beginPath(); ctx2d.arc(x, y, 4, 0, Math.PI*2); ctx2d.fill(); }
+        const floorTexture = new THREE.CanvasTexture(canvas2d); floorTexture.wrapS = THREE.RepeatWrapping; floorTexture.wrapT = THREE.RepeatWrapping; floorTexture.repeat.set(4, 2);
+        const floorGeo = new THREE.PlaneGeometry(40, 20); const floorMat = new THREE.MeshStandardMaterial({ map: floorTexture, roughness: 1 }); const floorMesh = new THREE.Mesh(floorGeo, floorMat); floorMesh.rotation.x = -Math.PI / 2; floorMesh.position.y = -0.25; floorMesh.receiveShadow = true; scene.add(floorMesh);
+
+        const fCanvas = document.createElement('canvas'); fCanvas.width = 256; fCanvas.height = 256; const fCtx = fCanvas.getContext('2d'); fCtx.fillStyle = '#5c3a21'; fCtx.fillRect(0,0,256,256); fCtx.fillStyle = '#8b5a2b'; for(let i=0; i<256; i+=12) { fCtx.globalAlpha = 0.6 + Math.random()*0.4; fCtx.fillRect(0, i, 256, 3 + Math.random()*3); }
+        const fTex = new THREE.CanvasTexture(fCanvas); fTex.wrapS = THREE.RepeatWrapping; fTex.wrapT = THREE.RepeatWrapping; const fMat = new THREE.MeshStandardMaterial({ map: fTex, roughness: 0.9, color: 0xffffff });
+        const fenceGroup = new THREE.Group(); const postGeo = new THREE.BoxGeometry(0.15, 0.6, 0.15); const railGeoX = new THREE.BoxGeometry(8.2, 0.1, 0.05); const railGeoZ = new THREE.BoxGeometry(0.05, 0.1, 3.6); 
+        const backRail1 = new THREE.Mesh(railGeoX, fMat); backRail1.position.set(0, 0.3, -1.8); const backRail2 = new THREE.Mesh(railGeoX, fMat); backRail2.position.set(0, 0.1, -1.8); backRail1.castShadow = true; backRail2.castShadow = true; fenceGroup.add(backRail1, backRail2);
+        const frontRail1 = new THREE.Mesh(railGeoX, fMat); frontRail1.position.set(0, 0.3, 1.8); const frontRail2 = new THREE.Mesh(railGeoX, fMat); frontRail2.position.set(0, 0.1, 1.8); frontRail1.castShadow = true; frontRail2.castShadow = true; fenceGroup.add(frontRail1, frontRail2);
+        const leftRail1 = new THREE.Mesh(railGeoZ, fMat); leftRail1.position.set(-4.1, 0.3, 0); const leftRail2 = new THREE.Mesh(railGeoZ, fMat); leftRail2.position.set(-4.1, 0.1, 0); leftRail1.castShadow = true; leftRail2.castShadow = true; fenceGroup.add(leftRail1, leftRail2);
+        const rightRail1 = new THREE.Mesh(railGeoZ, fMat); rightRail1.position.set(4.1, 0.3, 0); const rightRail2 = new THREE.Mesh(railGeoZ, fMat); rightRail2.position.set(4.1, 0.1, 0); rightRail1.castShadow = true; rightRail2.castShadow = true; fenceGroup.add(rightRail1, rightRail2);
+        for(let x = -4.1; x <= 4.1; x += 2.05) { const pb = new THREE.Mesh(postGeo, fMat); pb.position.set(x, 0.05, -1.8); pb.castShadow = true; fenceGroup.add(pb); const pf = new THREE.Mesh(postGeo, fMat); pf.position.set(x, 0.05, 1.8); pf.castShadow = true; fenceGroup.add(pf); }
+        for(let z = -1.8; z <= 1.8; z += 1.8) { if(z > -1.7 && z < 1.7) { const pl = new THREE.Mesh(postGeo, fMat); pl.position.set(-4.1, 0.05, z); pl.castShadow = true; fenceGroup.add(pl); const pr = new THREE.Mesh(postGeo, fMat); pr.position.set(4.1, 0.05, z); pr.castShadow = true; fenceGroup.add(pr); } }
+        scene.add(fenceGroup);
+
+        const house = create2DHenHouse(fId); house.position.set(0, 1.4, -1.5); scene.add(house);
+        const hen = create3DHenModel(); hen.scale.set(0.45, 0.45, 0.45); scene.add(hen);
+
+        const clock = new THREE.Clock(); let state = 'WANDERING'; let stateTimer = Math.random() * 3 + 2; let targetPos = new THREE.Vector3((Math.random()-0.5)*7, 0, Math.random()*1.5 - 0.2); let homePos = new THREE.Vector3(0, 0, -1.0); let walkTime = Math.random() * 10; let soundTimer = Math.random() * 5 + 3; 
+        function animate() {
+            window.active3DAnimations[fId] = requestAnimationFrame(animate); const delta = clock.getDelta(); const elapsed = clock.getElapsedTime();
+            soundTimer -= delta; if (soundTimer <= 0 && state !== 'AT_HOME') { if(window.playHenVoice) window.playHenVoice(); soundTimer = Math.random() * 8 + 4; }
+            if (state === 'WANDERING' || state === 'GOING_HOME') {
+                let dir = new THREE.Vector3().subVectors(targetPos, hen.position); dir.y = 0; let dist = dir.length();
+                if (dist > 0.05) { dir.normalize(); let speed = 0.6; hen.position.addScaledVector(dir, delta * speed); let targetAngle = Math.atan2(dir.x, dir.z); let currentAngle = hen.rotation.y; while(targetAngle - currentAngle > Math.PI) currentAngle += Math.PI * 2; while(targetAngle - currentAngle < -Math.PI) currentAngle -= Math.PI * 2; hen.rotation.y = THREE.MathUtils.lerp(currentAngle, targetAngle, 4 * delta); walkTime += delta * 10; hen.rotation.z = THREE.MathUtils.lerp(hen.rotation.z, 0, 10 * delta); hen.position.y = (Math.abs(Math.sin(walkTime)) * 0.1); hen.userData.headGroup.rotation.x = Math.sin(walkTime) * 0.3; hen.userData.rightLeg.rotation.x = Math.sin(walkTime) * 0.8; hen.userData.leftLeg.rotation.x = Math.sin(walkTime + Math.PI) * 0.8; hen.userData.rightWingGroup.rotation.z = Math.abs(Math.sin(walkTime)) * 0.3 + 0.1; hen.userData.leftWingGroup.rotation.z = -(Math.abs(Math.sin(walkTime)) * 0.3 + 0.1); hen.userData.tailGroup.rotation.y = Math.sin(walkTime) * 0.2; } else { if (state === 'WANDERING') { state = 'EATING'; stateTimer = 2 + Math.random() * 3; } else if (state === 'GOING_HOME') { state = 'AT_HOME'; stateTimer = 4 + Math.random() * 6; hen.visible = false; } }
+            } else if (state === 'EATING') { stateTimer -= delta; let peckSpeed = elapsed * 15; let peckPhase = Math.sin(peckSpeed); hen.rotation.z = THREE.MathUtils.lerp(hen.rotation.z, 0.4, 5 * delta); hen.position.y = THREE.MathUtils.lerp(hen.position.y, -0.15, 5 * delta); hen.userData.headGroup.rotation.x = peckPhase > 0 ? peckPhase * 0.8 : 0; hen.userData.rightLeg.rotation.x = THREE.MathUtils.lerp(hen.userData.rightLeg.rotation.x, 0, 10 * delta); hen.userData.leftLeg.rotation.x = THREE.MathUtils.lerp(hen.userData.leftLeg.rotation.x, 0, 10 * delta); hen.userData.rightWingGroup.rotation.z = THREE.MathUtils.lerp(hen.userData.rightWingGroup.rotation.z, 0.1, 10 * delta); hen.userData.leftWingGroup.rotation.z = THREE.MathUtils.lerp(hen.userData.leftWingGroup.rotation.z, -0.1, 10 * delta); hen.userData.tailGroup.rotation.y = THREE.MathUtils.lerp(hen.userData.tailGroup.rotation.y, 0, 10 * delta); if (stateTimer <= 0) { if (Math.random() < 0.3) { state = 'GOING_HOME'; targetPos.copy(homePos); } else { state = 'WANDERING'; targetPos.set((Math.random()-0.5)*7, 0, Math.random()*1.5 - 0.2); } }
+            } else if (state === 'AT_HOME') { stateTimer -= delta; if (stateTimer <= 0) { state = 'WANDERING'; hen.visible = true; hen.position.copy(homePos); targetPos.set((Math.random()-0.5)*7, 0, Math.random()*1.5 - 0.2); } }
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+    window.addEventListener('load', initHeader3DHen);
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const floatBtn = document.getElementById('floating-support');
+        const appContainer = document.querySelector('.app');
+        let isDragging = false; let hasDragged = false; let offsetX, offsetY;
+
+        const startDrag = (e) => {
+            isDragging = true; hasDragged = false;
+            const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            const rect = floatBtn.getBoundingClientRect(); offsetX = clientX - rect.left; offsetY = clientY - rect.top;
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        const drag = (e) => {
+            if (!isDragging) return; hasDragged = true;
+            const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            const appRect = appContainer.getBoundingClientRect();
+            let x = clientX - appRect.left - offsetX; let y = clientY - appRect.top - offsetY;
+            x = Math.max(0, Math.min(x, appRect.width - floatBtn.offsetWidth)); y = Math.max(0, Math.min(y, appRect.height - floatBtn.offsetHeight));
+            floatBtn.style.left = `${x}px`; floatBtn.style.top = `${y}px`; floatBtn.style.right = 'auto'; floatBtn.style.bottom = 'auto';
+            if (e.cancelable) e.preventDefault();
+        };
 
-        // Global Variables
-        let usersData = {};
-        let currentState = 'registration';
-        let countdownInterval;
-        let isRegisteredLocally = localStorage.getItem('giveaway_registered') === 'true';
+        const endDrag = () => { setTimeout(() => { isDragging = false; }, 0); };
+        floatBtn.addEventListener('mousedown', startDrag); window.addEventListener('mousemove', drag, { passive: false }); window.addEventListener('mouseup', endDrag);
+        floatBtn.addEventListener('touchstart', startDrag, { passive: false }); window.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
-        // Admin Mode Check
+        floatBtn.addEventListener('click', (e) => {
+            if (hasDragged) { e.preventDefault(); hasDragged = false; return; }
+            window.open('https://chat.whatsapp.com/KqpU93bIUSjIe9gc37Tgpa', '_blank');
+        });
+        
+        updateDayNightCycle();
+        setInterval(updateDayNightCycle, 60000);
+    });
+
+    function updateDayNightCycle() {
+        const hour = new Date().getHours();
+        const skyArea = document.querySelector('.top-sky-area');
+        const celestialBody = document.getElementById('celestial-body');
+        if(!skyArea || !celestialBody) return;
+        
+        const isDay = hour >= 6 && hour < 18;
+        if (isDay) {
+            skyArea.classList.add('sky-day');
+            skyArea.classList.remove('sky-night');
+            celestialBody.className = 'celestial-sun';
+        } else {
+            skyArea.classList.add('sky-night');
+            skyArea.classList.remove('sky-day');
+            celestialBody.className = 'celestial-moon';
+        }
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDi-kFiW7RhPuZqtzD9o4ouNBYLPeKi9iI",
+        databaseURL: "https://farming-363ed-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    let USER_ID = null; 
+    let userData = { eggs: 0, usdt: 0, diamonds: 0, floors: null, soundEnabled: true, botActive: false, invites: 0, inviteEarnings: 0 };
+    let gameInterval = null;
+    let currentCaptchaAnswer = 0;
+    let autoLogoutTimer = null;
+    let generatedWhatsappOtp = null;
+    let targetResetPhone = null;
+    let currentEggCounts = {};
+    let oasisListenerAttached = false;
+    const loader = document.getElementById('loader');
+
+    const FLOORS = [
+        { id: 'f1', cost: 0,  capacity: 5,  time_per_egg: 17280, rate_desc: "5 Eggs / Day", name: "1st Farm (Free)" },
+        { id: 'f2', cost: 5,  capacity: 15, time_per_egg: 5760,  rate_desc: "15 Eggs / Day", name: "2nd Farm" },
+        { id: 'f3', cost: 15, capacity: 30, time_per_egg: 2880,  rate_desc: "30 Eggs / Day", name: "3rd Farm" },
+        { id: 'f4', cost: 25, capacity: 45, time_per_egg: 1920,  rate_desc: "45 Eggs / Day", name: "4th Farm" },
+        { id: 'f5', cost: 50, capacity: 70, time_per_egg: 1234,  rate_desc: "70 Eggs / Day", name: "5th Farm" }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initCustomSelects();
         const urlParams = new URLSearchParams(window.location.search);
-        const isAdmin = urlParams.get('admin') === 'true';
-        if (isAdmin) {
-            document.getElementById('admin-panel').style.display = 'block';
+        const refCode = urlParams.get('ref');
+        if(refCode) { const inviteEl = document.getElementById('reg-invite'); if(inviteEl) inviteEl.value = refCode; }
+    });
+
+    window.navTo = function(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        if(screenId === 'screen-home') {
+            document.getElementById('wd-eggs').value = ''; document.getElementById('wd-usdt').value = '0.00';
+            document.getElementById('wd-address').value = ''; document.getElementById('dep-amount').value = ''; document.getElementById('dep-proof').value = '';
         }
+    };
 
-        // ==========================================
-        // 1. FIREBASE LISTENERS (REALTIME SYNC)
-        // ==========================================
+    function maskPhone(phone) {
+        if (!phone) return "Unknown";
+        if (phone.length > 6) return phone.substring(0, 5) + "****" + phone.substring(phone.length - 3);
+        return phone;
+    }
 
-        // Listen to Users Data
-        onValue(ref(db, 'users'), (snapshot) => {
-            if (snapshot.exists()) {
-                usersData = snapshot.val();
-                if(isAdmin) {
-                    document.getElementById('admin-user-count').innerText = `Users: ${Object.keys(usersData).length}`;
-                }
-            } else {
-                // -> AUTOMATIC CLEAR LOGIC:
-                usersData = {};
-                if(isAdmin) document.getElementById('admin-user-count').innerText = `Users: 0`;
+    async function getUserIP() {
+        try { let res = await fetch('https://api.ipify.org?format=json'); let data = await res.json(); return data.ip; } 
+        catch(e) { return 'unknown_ip_' + Math.floor(Math.random() * 1000000); }
+    }
 
-                // 1. Clear local browser memory
-                localStorage.removeItem('giveaway_registered');
-                isRegisteredLocally = false;
+    window.generateCaptcha = function(prefix) {
+        if(!document.getElementById(`${prefix}-captcha-text`)) return;
+        let a = Math.floor(Math.random() * 10) + 1; let b = Math.floor(Math.random() * 10) + 1;
+        currentCaptchaAnswer = a + b;
+        document.getElementById(`${prefix}-captcha-text`).innerText = `${a} + ${b} = ?`;
+        document.getElementById(`${prefix}-captcha-input`).value = '';
+    }
 
-                // 2. Automatically clear input boxes
-                document.getElementById('paymentMethod').value = '';
-                document.getElementById('holderName').value = '';
-                document.getElementById('accountNumber').value = '';
+    window.navToAuth = function(screenId) {
+        navTo(screenId);
+        if(screenId === 'screen-login') generateCaptcha('log'); if(screenId === 'screen-register') generateCaptcha('reg');
+        if(screenId === 'screen-login') {
+            document.getElementById('fg-step2').style.display = 'none'; document.getElementById('fg-btn-send').style.display = 'block';
+            document.getElementById('fg-btn-reset').style.display = 'none'; document.getElementById('fg-phone').removeAttribute('readonly');
+        }
+    }
 
-                // 3. Reset UI visibility
-                if (currentState === 'registration') {
-                    document.getElementById('paymentMethod').style.display = 'block';
-                    document.getElementById('holderName').style.display = 'block';
-                    document.getElementById('accountNumber').style.display = 'block';
-                    document.getElementById('btn-apply').style.display = 'block';
-                    document.getElementById('reg-message').style.display = 'none';
-                }
-            }
-        });
+    generateCaptcha('reg');
+    
+    window.copyReferralLink = function() {
+        if (!USER_ID) return alert("Please log in to get your referral link.");
+        const baseUrl = window.location.origin + window.location.pathname;
+        const refLink = `${baseUrl}?ref=${USER_ID.replace('user_', '')}`;
+        navigator.clipboard.writeText(refLink).then(() => { alert(`Your Referral Link:\n${refLink}\n\n(Link copied!)`); }, () => { alert('Failed to copy link.'); });
+    }
 
-        // Listen to Giveaway State
-        onValue(ref(db, 'state'), (snapshot) => {
-            let data = snapshot.val();
-            if (!data) {
-                if(isAdmin) set(ref(db, 'state'), { status: 'registration', timerEnd: 0, winner: null });
-                return;
-            }
+    window.sendWhatsappCode = function() {
+        const codeEl = document.getElementById('fg-code'); const code = codeEl.dataset.value; 
+        const phone = document.getElementById('fg-phone').value.trim();
+        if(!phone) return alert("Please enter a valid registered phone number.");
+        loader.style.display = 'flex';
+        const authRef = ref(db, 'auth_users/' + code.replace('+','') + phone);
+        get(authRef).then(snap => {
+            loader.style.display = 'none'; 
+            if(!snap.exists()) return alert("No account found for this phone number.");
+            generatedWhatsappOtp = Math.floor(100000 + Math.random() * 900000); targetResetPhone = code.replace('+','') + phone;
+            alert(`💬 WhatsApp Message sent to ${code} ${phone}:\n\n"Your Egg Tycoon password reset code is: ${generatedWhatsappOtp}\nPlease do not share this code with anyone."`);
+            document.getElementById('fg-step2').style.display = 'block'; document.getElementById('fg-btn-send').style.display = 'none';
+            document.getElementById('fg-btn-reset').style.display = 'block'; document.getElementById('fg-phone').setAttribute('readonly', true); codeEl.style.pointerEvents = 'none';
+        }).catch(err => { loader.style.display = 'none'; alert("Database Error: " + err.message); });
+    }
 
-            currentState = data.status;
-            
-            // Handle UI based on state
-            if (currentState === 'registration') {
-                showSection('registration-sec');
-                document.getElementById('deadline-banner').style.display = 'block';
-                document.getElementById('status-text').innerText = "Register now to win a special Eid gift!";
-                
-                if(isRegisteredLocally) {
-                    document.getElementById('paymentMethod').style.display = 'none';
-                    document.getElementById('holderName').style.display = 'none';
-                    document.getElementById('accountNumber').style.display = 'none';
-                    document.getElementById('btn-apply').style.display = 'none';
-                    document.getElementById('reg-message').style.display = 'block';
-                    document.getElementById('reg-message').innerText = "✅ You are registered! Waiting for admin to start the timer.";
+    window.processResetPassword = function() {
+        const otpInput = parseInt(document.getElementById('fg-otp').value); const newPwd = document.getElementById('fg-new-pwd').value;
+        if(otpInput !== generatedWhatsappOtp) return alert("Incorrect WhatsApp security code.");
+        if(newPwd.length < 6) return alert("New password must be at least 6 characters.");
+        loader.style.display = 'flex';
+        update(ref(db, 'auth_users/' + targetResetPhone), { password: btoa(newPwd) }).then(() => {
+            loader.style.display = 'none'; alert("Success! Your password has been successfully reset. Please log in with your new password.");
+            document.getElementById('fg-phone').value = ''; document.getElementById('fg-otp').value = ''; document.getElementById('fg-new-pwd').value = ''; navToAuth('screen-login');
+        }).catch(err => { loader.style.display = 'none'; alert("Database Error: " + err.message); });
+    }
+
+    window.processRegister = async function() {
+        const name = document.getElementById('reg-name').value.trim(); const code = document.getElementById('reg-code').dataset.value;
+        const phone = document.getElementById('reg-phone').value.trim(); const fullPhone = code.replace('+','') + phone;
+        const pwd = document.getElementById('reg-password').value; const inviteCode = document.getElementById('reg-invite').value.trim(); 
+        const cap = parseInt(document.getElementById('reg-captcha-input').value);
+
+        if(!name) return alert("Please enter your name."); if(!phone) return alert("Phone number is required.");
+        if(pwd.length < 6) return alert("Password must be at least 6 characters.");
+        if(cap !== currentCaptchaAnswer) { alert("Incorrect verification answer!"); generateCaptcha('reg'); return; }
+
+        loader.style.display = 'flex';
+        let userIP = await getUserIP(); let sanitizedIP = userIP.replace(/[\.\:]/g, '_'); 
+        const ipRef = ref(db, 'used_ips/' + sanitizedIP);
+        get(ipRef).then(ipSnap => {
+            let isBlocked = false; if(ipSnap.exists()) isBlocked = true; 
+            const authRef = ref(db, 'auth_users/' + fullPhone);
+            get(authRef).then(snap => {
+                if(snap.exists()) {
+                    loader.style.display = 'none'; alert("This phone number is already registered. Please Login."); navToAuth('screen-login');
                 } else {
-                    document.getElementById('paymentMethod').style.display = 'block';
-                    document.getElementById('holderName').style.display = 'block';
-                    document.getElementById('accountNumber').style.display = 'block';
-                    document.getElementById('btn-apply').style.display = 'block';
-                    document.getElementById('reg-message').style.display = 'none';
+                    set(authRef, { name: name, country_code: code, password: btoa(pwd), invited_by: inviteCode || null, created_at: new Date().toLocaleString(), ip_address: userIP, blocked: isBlocked
+                    }).then(() => {
+                        if(!isBlocked) set(ipRef, fullPhone); 
+                        if(inviteCode) {
+                            push(ref(db, 'invites_list/user_' + inviteCode), { phone: fullPhone, date: new Date().toLocaleString() });
+                            get(ref(db, 'users/user_' + inviteCode + '/invites')).then(isnap => {
+                                let current = isnap.exists() ? isnap.val() : 0;
+                                update(ref(db, 'users/user_' + inviteCode), { invites: current + 1 });
+                            });
+                        }
+                        loader.style.display = 'none';
+                        if(isBlocked) alert("Registration processed, but account has been BLOCKED due to multiple registrations on the same IP Address.");
+                        else alert("Registration Successful! Please login.");
+                        navToAuth('screen-login');
+                    });
                 }
-            } 
-            else if (currentState === 'countdown') {
-                showSection('machine-sec');
-                document.getElementById('deadline-banner').style.display = 'none';
-                document.getElementById('status-text').innerText = "Entries Locked! Get Ready.";
-                document.getElementById('machine-footer-text').innerText = "Timer is running...";
-                
-                // Show Timer Overlay ON Roller
-                document.getElementById('timer-overlay').classList.remove('hidden');
-                
-                startLocalCountdown(data.timerEnd);
-            }
-            else if (currentState === 'rolling') {
-                showSection('machine-sec');
-                document.getElementById('deadline-banner').style.display = 'none';
-                document.getElementById('status-text').innerText = "Good Luck!";
-                document.getElementById('machine-footer-text').innerText = "Spinning live...";
-                
-                // Hide Timer Overlay to reveal Roller
-                document.getElementById('timer-overlay').classList.add('hidden');
-                
-                triggerRollerAnimation(data.winner);
-            }
-            else if (currentState === 'finished') {
-                showSection('winner-sec');
-                document.getElementById('deadline-banner').style.display = 'none';
-                document.getElementById('status-text').innerText = "Giveaway Ended!";
-                if(data.winner) {
-                    document.getElementById('win-name').innerText = data.winner.name;
-                    document.getElementById('win-account').innerText = `${data.winner.method} - ${data.winner.account}`;
-                    triggerConfetti();
+            }).catch(err => { loader.style.display = 'none'; alert("Database Error: " + err.message); });
+        }).catch(err => { loader.style.display = 'none'; alert("Database Error: " + err.message); });
+    }
+
+    window.processLogin = function() {
+        const phone = document.getElementById('log-phone').value.trim(); const code = document.getElementById('log-code').dataset.value; 
+        const fullPhone = code.replace('+','') + phone; const pwd = document.getElementById('log-password').value; const cap = parseInt(document.getElementById('log-captcha-input').value);
+        if(!phone) return alert("Please enter your phone number."); if(!pwd) return alert("Please enter your password.");
+        if(cap !== currentCaptchaAnswer) { alert("Incorrect verification answer!"); generateCaptcha('log'); return; }
+
+        loader.style.display = 'flex';
+        get(ref(db, 'auth_users/' + fullPhone)).then(snap => {
+            loader.style.display = 'none';
+            if(snap.exists()) {
+                const data = snap.val();
+                if(data.country_code !== code) { alert("Incorrect country code selected for this phone number."); generateCaptcha('log'); return; }
+                if(data.password === btoa(pwd)) {
+                    if(data.blocked) { alert("Account Denied: Your account has been blocked for violating our policy (Multiple accounts registered on a single IP address)."); generateCaptcha('log'); return; }
+                    USER_ID = "user_" + fullPhone; startGame(); 
+                } else { alert("Incorrect Password!"); generateCaptcha('log'); }
+            } else { alert("Account not found. Please register first."); generateCaptcha('log'); }
+        }).catch(err => { loader.style.display = 'none'; alert("Database Error: " + err.message); });
+    }
+
+    window.processLogout = function(manual = false) {
+        if(gameInterval) clearInterval(gameInterval); if(autoLogoutTimer) clearTimeout(autoLogoutTimer);
+        Object.keys(window.active3DAnimations || {}).forEach(k => { if(k !== 'header') cancelAnimationFrame(window.active3DAnimations[k]); });
+        USER_ID = null; userData = { eggs: 0, usdt: 0, diamonds: 0, floors: null, soundEnabled: true, botActive: false, invites: 0, inviteEarnings: 0 };
+        document.getElementById('log-phone').value = ''; document.getElementById('log-password').value = '';
+        if(!manual) alert("Security Notice: You have been automatically logged out after 1 hour of activity. Please log in again.");
+        navToAuth('screen-login');
+    }
+
+    function startGame() {
+        navTo('screen-home'); initUser();
+        if(autoLogoutTimer) clearTimeout(autoLogoutTimer); autoLogoutTimer = setTimeout(() => { processLogout(false); }, 3600000); 
+
+        if(gameInterval) clearInterval(gameInterval);
+        gameInterval = setInterval(() => {
+            if(!userData || !userData.floors) return; let now = Date.now();
+            FLOORS.forEach(f => {
+                if(userData.floors[f.id] && userData.floors[f.id].adopted) {
+                    let elapsed = now - userData.floors[f.id].lastClaim;
+                    let available = Math.floor(elapsed / (f.time_per_egg * 1000));
+                    
+                    if(userData.botActive) {
+                        if(available > 0) {
+                            userData.floors[f.id].lastClaim += available * (f.time_per_egg * 1000);
+                            userData.eggs += available;
+                            update(ref(db, 'users/' + USER_ID), { eggs: userData.eggs, [`floors/${f.id}/lastClaim`]: userData.floors[f.id].lastClaim });
+                            document.getElementById('ui-eggs').innerText = Math.floor(userData.eggs);
+                            if(currentEggCounts[f.id] !== 0) { currentEggCounts[f.id] = 0; renderDiscreteEggs(f.id, 0); }
+                        }
+                    } else {
+                        if(available > f.capacity) available = f.capacity; if(available < 0) available = 0;
+                        if(currentEggCounts[f.id] !== available) { currentEggCounts[f.id] = available; renderDiscreteEggs(f.id, available); }
+                    }
                 }
-            }
+            });
+        }, 1000);
+    }
+
+    function initUser() {
+        loader.style.display = 'flex';
+        onValue(ref(db, 'users/' + USER_ID), (snapshot) => {
+            if (snapshot.exists()) {
+                let data = snapshot.val(); 
+                let previousAdoptions = userData.floors ? JSON.stringify(Object.values(userData.floors).map(f => f.adopted)) : null;
+                if(userData.floors && data.floors) { Object.keys(data.floors).forEach(k => { if(userData.floors[k] && userData.floors[k].lastClaim > data.floors[k].lastClaim) { data.floors[k].lastClaim = userData.floors[k].lastClaim; } }); }
+                userData = { ...userData, ...data };
+                if(userData.soundEnabled !== undefined) document.getElementById('sound-toggle').checked = userData.soundEnabled;
+                
+                if(userData.botActive) {
+                    document.getElementById('bot-status').innerText = "Active ✅";
+                    document.getElementById('bot-btn').style.display = "none";
+                } else {
+                    document.getElementById('bot-status').innerText = "Inactive";
+                    document.getElementById('bot-btn').style.display = "block";
+                }
+
+                let newAdoptions = userData.floors ? JSON.stringify(Object.values(userData.floors).map(f => f.adopted)) : null;
+                if(!userData.floors) { initDefaultFloors(); } else if (previousAdoptions !== newAdoptions) { renderFloors(); }
+            } else { initDefaultFloors(); }
+            document.getElementById('ui-eggs').innerText = Math.floor(userData.eggs);
+            document.getElementById('ui-usdt').innerText = parseFloat(userData.usdt).toFixed(2);
+            document.getElementById('ui-diamonds').innerText = Number(userData.diamonds || 0).toFixed(2).replace(/\.00$/, '');
+            loader.style.display = 'none';
         });
+    }
 
-        // ==========================================
-        // 2. USER FUNCTIONS
-        // ==========================================
-        window.submitEntry = function() {
-            const method = document.getElementById('paymentMethod').value;
-            const name = document.getElementById('holderName').value.trim();
-            const account = document.getElementById('accountNumber').value.trim();
+    function initDefaultFloors() {
+        userData.floors = { f1: { adopted: true, lastClaim: Date.now() }, f2: { adopted: false, lastClaim: 0 }, f3: { adopted: false, lastClaim: 0 }, f4: { adopted: false, lastClaim: 0 }, f5: { adopted: false, lastClaim: 0 } };
+        userData.botActive = false;
+        set(ref(db, 'users/' + USER_ID), userData); renderFloors();
+    }
 
-            if (!method || !name || !account) {
-                alert("Please fill out all fields: Payment Method, Holder Name, and Account Number.");
-                return;
+    function renderFloors() {
+        const container = document.getElementById('floors-container');
+        Object.keys(window.active3DAnimations || {}).forEach(k => { if(k !== 'header') cancelAnimationFrame(window.active3DAnimations[k]); });
+        container.innerHTML = ''; 
+        
+        FLOORS.forEach(f => {
+            const isAdopted = userData.floors[f.id] && userData.floors[f.id].adopted;
+            let html = `<div class="floor-box"><div class="floor-divider"><span>${isAdopted ? f.name.replace('Farm','Upgraded Farm') : f.name}</span><span>Rate: ${f.rate_desc}</span></div>`;
+            if(isAdopted) { 
+                html += `<div class="cloud-element c-1">☁️</div><div class="cloud-element c-2">☁️</div><div class="cloud-element c-3">☁️</div><div id="floor-3d-${f.id}" class="floor-3d-canvas"></div><div class="eggs-container" id="discrete-eggs-${f.id}"></div>`; 
+            } else { 
+                html += `<div class="locked-overlay"><span style="font-size:35px; margin-bottom:5px; filter: drop-shadow(0 2px 2px #000);">🔒</span><div class="adopt-btn" onclick="upgradeFarm('${f.id}')">Upgrade for $${f.cost} USDT</div></div>`; 
             }
+            html += `</div>`; container.innerHTML += html;
+        });
+        FLOORS.forEach(f => { if(userData.floors[f.id] && userData.floors[f.id].adopted) { initFloor3D(f.id); } });
+    }
 
-            // Push to Firebase
-            push(ref(db, 'users'), {
-                method: method,
-                name: name,
-                account: account,
-                timestamp: Date.now()
-            }).then(() => {
-                localStorage.setItem('giveaway_registered', 'true');
-                isRegisteredLocally = true;
-                
-                document.getElementById('paymentMethod').style.display = 'none';
-                document.getElementById('holderName').style.display = 'none';
-                document.getElementById('accountNumber').style.display = 'none';
-                document.getElementById('btn-apply').style.display = 'none';
-                document.getElementById('reg-message').style.display = 'block';
-                document.getElementById('reg-message').innerText = "✅ Registration Successful! Please stay on this page.";
-            }).catch((error) => {
-                alert("Error registering. Please try again.");
-                console.error(error);
+    function renderDiscreteEggs(fId, count) {
+        let container = document.getElementById(`discrete-eggs-${fId}`); if(!container) return; let html = '';
+        for(let i=0; i<count; i++) html += `<div class="single-floor-egg" onclick="collectSingleEgg('${fId}', this)"></div>`;
+        container.innerHTML = html;
+    }
+
+    window.purchaseBot = function() {
+        if(userData.botActive) return alert("Bot is already active!");
+        if(userData.usdt < 2) return alert("Insufficient USDT! You need $2.00 to purchase the bot.");
+        loader.style.display = 'flex';
+        update(ref(db, 'users/' + USER_ID), { usdt: userData.usdt - 2, botActive: true }).then(() => {
+            loader.style.display = 'none'; alert("Bot purchased! It will now automatically collect your eggs 24/7.");
+        }).catch(err => { loader.style.display = 'none'; alert("Error: " + err.message); });
+    }
+
+    window.upgradeFarm = async function(fId) {
+        let fDef = FLOORS.find(x => x.id === fId);
+        if(userData.usdt >= fDef.cost) {
+            loader.style.display = 'flex';
+            userData.usdt -= fDef.cost; userData.floors[fId].adopted = true; userData.floors[fId].lastClaim = Date.now();
+            let updates = {}; updates[`users/${USER_ID}/usdt`] = userData.usdt; updates[`users/${USER_ID}/floors/${fId}`] = userData.floors[fId];
+            try {
+                if(fDef.cost > 0) {
+                    let phone = USER_ID.replace('user_', ''); let authSnap = await get(ref(db, 'auth_users/' + phone));
+                    if(authSnap.exists()) {
+                        let authData = authSnap.val();
+                        if(authData.invited_by) {
+                            let inviterId = "user_" + authData.invited_by; let inviterSnap = await get(ref(db, 'users/' + inviterId));
+                            let earnedDiamonds = fDef.cost * 0.15; updates[`users/${inviterId}/diamonds`] = inviterSnap.exists() ? (inviterSnap.val().diamonds || 0) + earnedDiamonds : earnedDiamonds;
+                        }
+                    }
+                }
+                await update(ref(db), updates); loader.style.display = 'none'; alert(`Upgraded to ${fDef.name}!`);
+            } catch(e) { loader.style.display = 'none'; alert("Error: " + e.message); }
+        } else alert(`Insufficient Base USDT! Needs $${fDef.cost}.`);
+    }
+
+    window.exchangeDiamonds = function() {
+        let amount = parseFloat(document.getElementById('exchange-diamond-input').value);
+        if(isNaN(amount) || amount <= 0) return alert("Enter a valid amount of diamonds."); if(userData.diamonds < amount) return alert("Insufficient Diamonds!");
+        loader.style.display = 'flex'; let eggsGained = amount * 2;
+        update(ref(db, 'users/' + USER_ID), { diamonds: userData.diamonds - amount, eggs: userData.eggs + eggsGained }).then(() => { loader.style.display = 'none'; alert(`Successfully exchanged ${amount} Diamonds for ${eggsGained} Blue Eggs!`); document.getElementById('exchange-diamond-input').value = ''; }).catch(err => { loader.style.display = 'none'; alert("Error: " + err.message); });
+    }
+
+    window.collectSingleEgg = function(fId, element) {
+        if(!userData.floors[fId].adopted || userData.botActive) return;
+        if (element.style.display === 'none') return;
+        element.style.display = 'none';
+        let fDef = FLOORS.find(x => x.id === fId); let now = Date.now();
+        let maxAllowedElapsed = fDef.capacity * fDef.time_per_egg * 1000; let actualElapsed = now - userData.floors[fId].lastClaim;
+        if(actualElapsed < fDef.time_per_egg * 1000) return; 
+        if(actualElapsed > maxAllowedElapsed) userData.floors[fId].lastClaim = now - maxAllowedElapsed;
+        userData.floors[fId].lastClaim += (fDef.time_per_egg * 1000); userData.eggs += 1;
+        if(currentEggCounts[fId] > 0) currentEggCounts[fId]--;
+        update(ref(db, 'users/' + USER_ID), { eggs: userData.eggs, [`floors/${fId}/lastClaim`]: userData.floors[fId].lastClaim });
+        playEggSound(); document.getElementById('ui-eggs').innerText = Math.floor(userData.eggs);
+    }
+
+    window.playEggSound = function() {
+        if(!userData.soundEnabled) return;
+        try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1); gain.gain.setValueAtTime(1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1); osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.1); } catch(e) {}
+    }
+
+    window.toggleSound = function() { userData.soundEnabled = document.getElementById('sound-toggle').checked; if(USER_ID) update(ref(db, 'users/' + USER_ID), { soundEnabled: userData.soundEnabled }); }
+
+    window.loadFriends = function() {
+        document.getElementById('ui-invites').innerText = userData.invites || 0; document.getElementById('ui-invite-earnings').innerText = (userData.inviteEarnings || 0).toFixed(2) + " ₮";
+        const ul = document.getElementById('friends-ul'); ul.innerHTML = "<p style='text-align:center;'>Loading...</p>";
+        get(ref(db, 'invites_list/' + USER_ID)).then(snap => {
+            ul.innerHTML = "";
+            if(!snap.exists()) return ul.innerHTML = "<p style='text-align:center; color:#888; font-size:13px;'>No friends invited yet.</p>";
+            snap.forEach(child => {
+                let f = child.val(); let masked = maskPhone(f.phone);
+                ul.innerHTML += `<li class="data-item" style="padding:10px;"><div class="hi-info"><span class="hi-title">Farmer: ${masked}</span><span class="hi-date">Joined: ${f.date}</span></div></li>`;
             });
-        };
+        });
+    }
 
-        // ==========================================
-        // 3. ADMIN FUNCTIONS
-        // ==========================================
-        window.adminStartTimer = function() {
-            const mins = parseFloat(document.getElementById('admin-minutes').value);
-            if (isNaN(mins) || mins <= 0) return alert("Enter valid minutes");
-            
-            const endTime = Date.now() + (mins * 60 * 1000);
-            update(ref(db, 'state'), {
-                status: 'countdown',
-                timerEnd: endTime,
-                winner: null
-            });
-        };
+    window.submitSocialVideo = function() {
+        let platform = document.getElementById('soc-platform').value; let link = document.getElementById('soc-link').value.trim();
+        if(!link) return alert("Please enter the video link.");
+        loader.style.display = 'flex';
+        push(ref(db, 'social_rewards/' + USER_ID), { platform: platform, link: link, status: "Pending", reward: 0, date: new Date().toLocaleString() }).then(() => {
+            loader.style.display = 'none'; alert("Video submitted! Admin will review and reward you in Diamonds.");
+            document.getElementById('soc-link').value = ''; loadSocialHistory();
+        }).catch(err => { loader.style.display = 'none'; alert("Error: " + err.message); });
+    }
 
-        window.adminRollWinner = function() {
-            const keys = Object.keys(usersData);
-            if (keys.length === 0) return alert("No users registered yet!");
-
-            // Pick a random winner
-            const randomKey = keys[Math.floor(Math.random() * keys.length)];
-            const winningUser = usersData[randomKey];
-
-            // Set state to rolling -> This fades out the timer and triggers the spin!
-            update(ref(db, 'state'), {
-                status: 'rolling',
-                winner: winningUser
-            });
-
-            // After 5.5s spin animation, show the Winner Screen
-            setTimeout(() => {
-                update(ref(db, 'state'), { status: 'finished' });
-            }, 5500); 
-        };
-
-        window.adminReset = function() {
-            if(confirm("Are you sure? This will DELETE all users' data and start a completely new round.")) {
-                // 1. Delete all users from the Database
-                remove(ref(db, 'users'));
-
-                // 2. Change screens for everyone back to the Registration Page
-                update(ref(db, 'state'), {
-                    status: 'registration',
-                    timerEnd: 0,
-                    winner: null
+    window.loadSocialHistory = function() {
+        if(!USER_ID) return; const ul = document.getElementById('social-history-ul'); ul.innerHTML = "<p style='text-align:center;'>Loading...</p>";
+        get(ref(db, 'social_rewards/' + USER_ID)).then((snap) => {
+            ul.innerHTML = "";
+            if (snap.exists()) {
+                let data = snap.val(); Object.keys(data).reverse().forEach(key => {
+                    let item = data[key]; 
+                    ul.innerHTML += `<li class="data-item" style="padding:10px;"><div class="hi-info"><span class="hi-title">${item.platform} Video</span><span class="hi-date">${item.date}</span></div><div class="hi-status status-${item.status}">${item.status}</div></li>`;
                 });
-            }
-        };
+            } else { ul.innerHTML = "<p style='text-align:center; color:#888; padding:10px; font-size:13px;'>No submissions yet.</p>"; }
+        });
+    }
 
-        // ==========================================
-        // 4. HELPER & UI FUNCTIONS
-        // ==========================================
+    window.loadRanking = function() {
+        const ul = document.getElementById('ranking-ul'); ul.innerHTML = "<p style='text-align:center;'>Loading...</p>";
+        get(ref(db, 'users')).then(snap => {
+            ul.innerHTML = ""; if(!snap.exists()) return;
+            let usersArr = []; snap.forEach(child => { usersArr.push({ id: child.key, eggs: child.val().eggs || 0 }); });
+            usersArr.sort((a,b) => b.eggs - a.eggs); let top10 = usersArr.slice(0, 10);
+            top10.forEach((u, index) => {
+                let rankBadge = index < 3 ? `<span class="rank-crown">👑</span>` : `<span class="rank-number">${index+1}</span>`;
+                let displayId = u.id.replace('user_', ''); if(displayId.length > 6) displayId = displayId.substring(0,4) + "***" + displayId.substring(displayId.length-2);
+                ul.innerHTML += `<li class="data-item">${rankBadge}<div class="hi-info"><span class="hi-title">Farmer: ${displayId}</span></div><div class="hi-status" style="background:#e3f2fd; color:#1e3c72;">${Math.floor(u.eggs)} Eggs</div></li>`;
+            });
+        });
+    }
 
-        function showSection(id) {
-            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+    window.initOasis = function() {
+        if(!USER_ID) return; const dateStr = new Date().toDateString(); const oasisRef = ref(db, 'oasis');
+        get(oasisRef).then(snap => { let data = snap.val(); if(!data || data.date !== dateStr) { let newEggs = {}; for(let i=1; i<=50; i++) newEggs['egg_'+i] = true; set(oasisRef, { date: dateStr, eggs: newEggs }); } });
+        if (!oasisListenerAttached) { oasisListenerAttached = true; onValue(ref(db, 'oasis/eggs'), (snap) => { if(document.getElementById('screen-oasis').classList.contains('active')) renderOasisGrid(snap.val()); }); } else { get(ref(db, 'oasis/eggs')).then((snap) => { renderOasisGrid(snap.val()); }); }
+    }
 
-        // --- COUNTDOWN TIMER ---
-        function startLocalCountdown(endTime) {
-            clearInterval(countdownInterval);
-            
-            countdownInterval = setInterval(() => {
-                const now = Date.now();
-                const diff = endTime - now;
+    function renderOasisGrid(eggsData) {
+        if(!eggsData) return; const grid = document.getElementById('oasis-grid'); grid.innerHTML = ''; let remains = 0;
+        for(let i=1; i<=50; i++) { let isAvailable = eggsData['egg_'+i]; if(isAvailable) { remains++; grid.innerHTML += `<div class="oasis-egg" onclick="claimOasisEgg('egg_${i}')"><div class="blue-egg-3d" style="font-size: 30px;"></div></div>`; } else { grid.innerHTML += `<div class="oasis-broken">💥</div>`; } }
+        document.getElementById('oasis-remains').innerText = remains;
+    }
 
-                if (diff <= 0) {
-                    clearInterval(countdownInterval);
-                    document.getElementById('timer-display').innerText = "00:00:00";
-                    document.getElementById('machine-footer-text').innerText = "Waiting for Admin to click Spin!";
-                    return;
-                }
+    window.claimOasisEgg = function(eggId) {
+        let isPro = false; if(userData.floors) { if(userData.floors.f2.adopted || userData.floors.f3.adopted || userData.floors.f4.adopted || userData.floors.f5.adopted) isPro = true; }
+        if(!isPro) return alert("Oasis is for Pro Users only! Upgrade Farm 2 or above to claim global eggs.");
+        get(ref(db, `oasis/eggs/${eggId}`)).then(snap => {
+            if(snap.val() === true) { update(ref(db, 'oasis/eggs'), { [eggId]: false }); userData.eggs += 1; update(ref(db, `users/${USER_ID}`), { eggs: userData.eggs }); playEggSound(); } else { alert("Too slow! Someone else already claimed this beautiful egg."); }
+        });
+    }
 
-                const totalSeconds = Math.floor(diff / 1000);
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
+    window.calcExchange = function() { let eggs = document.getElementById('wd-eggs').value; document.getElementById('wd-usdt').value = isNaN(eggs*0.01) ? "0.00" : (eggs*0.01).toFixed(2); }
 
-                // Output Format: HH:MM:SS
-                document.getElementById('timer-display').innerText = 
-                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }, 1000);
-        }
+    window.submitWithdraw = function() {
+        let eggs = parseFloat(document.getElementById('wd-eggs').value); let address = document.getElementById('wd-address').value; let usdtAmt = eggs * 0.01;
+        if(!eggs || eggs <= 0) return alert("Enter valid egg amount."); if(usdtAmt < 2) return alert("Minimum withdrawal $2.");
+        if(userData.eggs < eggs) return alert("Insufficient eggs."); if(address.trim() === "") return alert("Enter wallet address.");
+        loader.style.display = 'flex'; update(ref(db, 'users/' + USER_ID), { eggs: userData.eggs - eggs });
+        push(ref(db, 'withdrawals/' + USER_ID), { amount_usdt: usdtAmt.toFixed(2), eggs_used: eggs, network: document.getElementById('wd-network').value, address: address, status: "Pending", date: new Date().toLocaleString() }).then(() => { loader.style.display = 'none'; alert("Withdrawal submitted!"); navTo('screen-home'); });
+    }
 
-        function triggerRollerAnimation(winner) {
-            const rollerList = document.getElementById('roller-list');
-            rollerList.innerHTML = ''; 
-            
-            rollerList.style.transition = 'none';
-            rollerList.style.transform = 'translateY(0)';
+    const DEPOSIT_ADDRESSES = { "USDT TRC20": "TKEmWeig1jtWLgPZp4pX4PHAsPsrFNdqf2", "USDT BEP20": "0xeb0ee64208106984101b1f127cf221358771dbfa" };
+    window.updateDepositAddress = function() { document.getElementById('dep-address-txt').innerText = DEPOSIT_ADDRESSES[document.getElementById('dep-network').value]; }
+    window.copyAddress = function() { navigator.clipboard.writeText(document.getElementById('dep-address-txt').innerText); alert("Address copied!"); }
 
-            const userKeys = Object.keys(usersData);
-            const totalSpins = 35;
-            
-            for (let i = 0; i < totalSpins - 1; i++) {
-                let randomUser = {name: "Loading...", account: "000000000", method: "Payment"};
-                if(userKeys.length > 0) {
-                    randomUser = usersData[userKeys[Math.floor(Math.random() * userKeys.length)]];
-                }
-                const li = document.createElement('li');
-                li.className = 'roller-item';
-                li.innerHTML = `${randomUser.name} <span class="account-details">${randomUser.method} - ${randomUser.account}</span>`;
-                rollerList.appendChild(li);
-            }
+    window.submitDeposit = async function() {
+        const amt = parseFloat(document.getElementById('dep-amount').value); const proof = document.getElementById('dep-proof').files[0]; const apiKey = '31c324eeef3df98e593e1897b02cc37b';
+        if (!amt || amt < 1) return alert("Minimum deposit is $1.00."); if (!proof) return alert("Please upload a payment proof image.");
+        loader.style.display = 'flex'; loader.innerText = 'Uploading Proof...';
+        const formData = new FormData(); formData.append('key', apiKey); formData.append('image', proof);
+        try {
+            const response = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData, }); const result = await response.json();
+            if (result.success) {
+                const imageUrl = result.data.url; loader.innerText = 'Submitting...';
+                await push(ref(db, 'deposits/' + USER_ID), { amount_usdt: amt.toFixed(2), network: document.getElementById('dep-network').value, proof_url: imageUrl, status: "Review", date: new Date().toLocaleString() });
+                loader.style.display = 'none'; loader.innerText = 'Loading...'; alert("Deposit submitted successfully for review!"); navTo('screen-home');
+            } else { throw new Error(result.error.message); }
+        } catch (error) { loader.style.display = 'none'; loader.innerText = 'Loading...'; alert("Image upload failed: " + error.message); }
+    }
 
-            // The actual winner is exactly the LAST item
-            const winLi = document.createElement('li');
-            winLi.className = 'roller-item';
-            winLi.style.background = '#FFEA70'; // Gold highlight background
-            winLi.innerHTML = `🏆 ${winner.name} <span class="account-details">${winner.method} - ${winner.account}</span>`;
-            rollerList.appendChild(winLi);
+    window.loadHistory = function(type) {
+        if(!USER_ID) return; const ul = document.getElementById('history-ul'); ul.innerHTML = "<p style='text-align:center;'>Loading...</p>";
+        document.getElementById('history-title').innerText = type === 'withdraw' ? 'Withdrawal History' : 'Deposit History';
+        get(ref(db, (type === 'withdraw' ? 'withdrawals/' : 'deposits/') + USER_ID)).then((snap) => {
+            ul.innerHTML = "";
+            if (snap.exists()) { let data = snap.val(); Object.keys(data).reverse().forEach(key => { let item = data[key]; let icon = type === 'withdraw' ? '📤' : '📥'; ul.innerHTML += `<li class="data-item"><div class="hi-info"><span class="hi-title">${icon} ${item.amount_usdt} USDT</span><span class="hi-date">${item.date} • ${item.network}</span></div><div class="hi-status status-${item.status}">${item.status}</div></li>`; }); } 
+            else { ul.innerHTML = "<p style='text-align:center; color:#888; padding:20px;'>No history found.</p>"; }
+        });
+    }
 
-            // Force DOM reflow
-            void rollerList.offsetWidth;
+    const countryData = [
+        { name: "Afghanistan", code: "+93", flag: "🇦🇫" }, { name: "Albania", code: "+355", flag: "🇦🇱" }, { name: "Algeria", code: "+213", flag: "🇩🇿" },
+        { name: "Andorra", code: "+376", flag: "🇦🇩" }, { name: "Angola", code: "+244", flag: "🇦🇴" }, { name: "Argentina", code: "+54", flag: "🇦🇷" },
+        { name: "Armenia", code: "+374", flag: "🇦🇲" }, { name: "Australia", code: "+61", flag: "🇦🇺" }, { name: "Austria", code: "+43", flag: "🇦🇹" },
+        { name: "Azerbaijan", code: "+994", flag: "🇦🇿" }, { name: "Bahamas", code: "+1-242", flag: "🇧🇸" }, { name: "Bahrain", code: "+973", flag: "🇧🇭" },
+        { name: "Bangladesh", code: "+880", flag: "🇧🇩" }, { name: "Belarus", code: "+375", flag: "🇧🇾" }, { name: "Belgium", code: "+32", flag: "🇧🇪" },
+        { name: "Belize", code: "+501", flag: "🇧🇿" }, { name: "Benin", code: "+229", flag: "🇧🇯" }, { name: "Bhutan", code: "+975", flag: "🇧🇹" },
+        { name: "Bolivia", code: "+591", flag: "🇧🇴" }, { name: "Bosnia & Herzegovina", code: "+387", flag: "🇧🇦" }, { name: "Botswana", code: "+267", flag: "🇧🇼" },
+        { name: "Brazil", code: "+55", flag: "🇧🇷" }, { name: "Brunei", code: "+673", flag: "🇧🇳" }, { name: "Bulgaria", code: "+359", flag: "🇧🇬" },
+        { name: "Burkina Faso", code: "+226", flag: "🇧🇫" }, { name: "Cambodia", code: "+855", flag: "🇰🇭" }, { name: "Cameroon", code: "+237", flag: "🇨🇲" },
+        { name: "Canada", code: "+1", flag: "🇨🇦" }, { name: "Central African Republic", code: "+236", flag: "🇨🇫" }, { name: "Chile", code: "+56", flag: "🇨🇱" },
+        { name: "China", code: "+86", flag: "🇨🇳" }, { name: "Colombia", code: "+57", flag: "🇨🇴" }, { name: "Congo - Brazzaville", code: "+242", flag: "🇨🇬" },
+        { name: "Congo - Kinshasa", code: "+243", flag: "🇨🇩" }, { name: "Costa Rica", code: "+506", flag: "🇨🇷" }, { name: "Croatia", code: "+385", flag: "🇭🇷" },
+        { name: "Cuba", code: "+53", flag: "🇨🇺" }, { name: "Cyprus", code: "+357", flag: "🇨🇾" }, { name: "Czechia", code: "+420", flag: "🇨🇿" },
+        { name: "Denmark", code: "+45", flag: "🇩🇰" }, { name: "Djibouti", code: "+253", flag: "🇩🇯" }, { name: "Dominican Republic", code: "+1-809", flag: "🇩🇴" },
+        { name: "Ecuador", code: "+593", flag: "🇪🇨" }, { name: "Egypt", code: "+20", flag: "🇪🇬" }, { name: "El Salvador", code: "+503", flag: "🇸🇻" },
+        { name: "Estonia", code: "+372", flag: "🇪🇪" }, { name: "Ethiopia", code: "+251", flag: "🇪🇹" }, { name: "Fiji", code: "+679", flag: "🇫🇯" },
+        { name: "Finland", code: "+358", flag: "🇫🇮" }, { name: "France", code: "+33", flag: "🇫🇷" }, { name: "Gabon", code: "+241", flag: "🇬🇦" },
+        { name: "Georgia", code: "+995", flag: "🇬🇪" }, { name: "Germany", code: "+49", flag: "🇩🇪" }, { name: "Ghana", code: "+233", flag: "🇬🇭" },
+        { name: "Greece", code: "+30", flag: "🇬🇷" }, { name: "Guatemala", code: "+502", flag: "🇬🇹" }, { name: "Honduras", code: "+504", flag: "🇭🇳" },
+        { name: "Hong Kong", code: "+852", flag: "🇭🇰" }, { name: "Hungary", code: "+36", flag: "🇭🇺" }, { name: "Iceland", code: "+354", flag: "🇮🇸" },
+        { name: "India", code: "+91", flag: "🇮🇳" }, { name: "Indonesia", code: "+62", flag: "🇮🇩" }, { name: "Iran", code: "+98", flag: "🇮🇷" },
+        { name: "Iraq", code: "+964", flag: "🇮🇶" }, { name: "Ireland", code: "+353", flag: "🇮🇪" }, { name: "Israel", code: "+972", flag: "🇮🇱" },
+        { name: "Italy", code: "+39", flag: "🇮🇹" }, { name: "Jamaica", code: "+1-876", flag: "🇯🇲" }, { name: "Japan", code: "+81", flag: "🇯🇵" },
+        { name: "Jordan", code: "+962", flag: "🇯🇴" }, { name: "Kazakhstan", code: "+7", flag: "🇰🇿" }, { name: "Kenya", code: "+254", flag: "🇰🇪" },
+        { name: "Kuwait", code: "+965", flag: "🇰🇼" }, { name: "Laos", code: "+856", flag: "🇱🇦" }, { name: "Latvia", code: "+371", flag: "🇱🇻" },
+        { name: "Lebanon", code: "+961", flag: "🇱🇧" }, { name: "Liberia", code: "+231", flag: "🇱🇷" }, { name: "Libya", code: "+218", flag: "🇱🇾" },
+        { name: "Lithuania", code: "+370", flag: "🇱🇹" }, { name: "Luxembourg", code: "+352", flag: "🇱🇺" }, { name: "Madagascar", code: "+261", flag: "🇲🇬" },
+        { name: "Malaysia", code: "+60", flag: "🇲🇾" }, { name: "Maldives", code: "+960", flag: "🇲🇻" }, { name: "Mali", code: "+223", flag: "🇲🇱" },
+        { name: "Malta", code: "+356", flag: "🇲🇹" }, { name: "Mexico", code: "+52", flag: "🇲🇽" }, { name: "Monaco", code: "+377", flag: "🇲🇨" },
+        { name: "Mongolia", code: "+976", flag: "🇲🇳" }, { name: "Morocco", code: "+212", flag: "🇲🇦" }, { name: "Myanmar (Burma)", code: "+95", flag: "🇲🇲" },
+        { name: "Nepal", code: "+977", flag: "🇳🇵" }, { name: "Netherlands", code: "+31", flag: "🇳🇱" }, { name: "New Zealand", code: "+64", flag: "🇳🇿" },
+        { name: "Nigeria", code: "+234", flag: "🇳🇬" }, { name: "North Korea", code: "+850", flag: "🇰🇵" }, { name: "North Macedonia", code: "+389", flag: "🇲🇰" },
+        { name: "Norway", code: "+47", flag: "🇳🇴" }, { name: "Oman", code: "+968", flag: "🇴🇲" }, { name: "Pakistan", code: "+92", flag: "🇵🇰" },
+        { name: "Palestine", code: "+970", flag: "🇵🇸" }, { name: "Panama", code: "+507", flag: "🇵🇦" }, { name: "Paraguay", code: "+595", flag: "🇵🇾" },
+        { name: "Peru", code: "+51", flag: "🇵🇪" }, { name: "Philippines", code: "+63", flag: "🇵🇭" }, { name: "Poland", code: "+48", flag: "🇵🇱" },
+        { name: "Portugal", code: "+351", flag: "🇵🇹" }, { name: "Qatar", code: "+974", flag: "🇶🇦" }, { name: "Romania", code: "+40", flag: "🇷🇴" },
+        { name: "Russia", code: "+7", flag: "🇷🇺" }, { name: "Saudi Arabia", code: "+966", flag: "🇸🇦" }, { name: "Senegal", code: "+221", flag: "🇸🇳" },
+        { name: "Serbia", code: "+381", flag: "🇷🇸" }, { name: "Singapore", code: "+65", flag: "🇸🇬" }, { name: "Slovakia", code: "+421", flag: "🇸🇰" },
+        { name: "Slovenia", code: "+386", flag: "🇸🇮" }, { name: "Somalia", code: "+252", flag: "🇸🇴" }, { name: "South Africa", code: "+27", flag: "🇿🇦" },
+        { name: "South Korea", code: "+82", flag: "🇰🇷" }, { name: "Spain", code: "+34", flag: "🇪🇸" }, { name: "Sri Lanka", code: "+94", flag: "🇱🇰" },
+        { name: "Sudan", code: "+249", flag: "🇸🇩" }, { name: "Sweden", code: "+46", flag: "🇸🇪" }, { name: "Switzerland", code: "+41", flag: "🇨🇭" },
+        { name: "Syria", code: "+963", flag: "🇸🇾" }, { name: "Taiwan", code: "+886", flag: "🇹🇼" }, { name: "Tanzania", code: "+255", flag: "🇹🇿" },
+        { name: "Thailand", code: "+66", flag: "🇹🇭" }, { name: "Togo", code: "+228", flag: "🇹🇬" }, { name: "Tunisia", code: "+216", flag: "🇹🇳" },
+        { name: "Turkey", code: "+90", flag: "🇹🇷" }, { name: "Uganda", code: "+256", flag: "🇺🇬" }, { name: "Ukraine", code: "+380", flag: "🇺🇦" },
+        { name: "United Arab Emirates", code: "+971", flag: "🇦🇪" }, { name: "United Kingdom", code: "+44", flag: "🇬🇧" }, { name: "United States", code: "+1", flag: "🇺🇸" },
+        { name: "Uruguay", code: "+598", flag: "🇺🇾" }, { name: "Uzbekistan", code: "+998", flag: "🇺🇿" }, { name: "Venezuela", code: "+58", flag: "🇻🇪" },
+        { name: "Vietnam", code: "+84", flag: "🇻🇳" }, { name: "Yemen", code: "+967", flag: "🇾🇪" }, { name: "Zambia", code: "+260", flag: "🇿🇲" },
+        { name: "Zimbabwe", code: "+263", flag: "🇿🇼" }
+    ];
 
-            // Move to the very bottom item
-            rollerList.style.transition = 'transform 5s cubic-bezier(0.1, 0.7, 0.1, 1)';
-            const itemHeight = 140; 
-            const stopPosition = -((totalSpins - 1) * itemHeight);
-            rollerList.style.transform = `translateY(${stopPosition}px)`;
-        }
+    function initCustomSelects() {
+        document.querySelectorAll('.country-select-custom').forEach(wrapper => {
+            const defaultCountry = countryData.find(c => c.code === '+91') || countryData[0];
+            wrapper.innerHTML = `<div class="custom-select-wrapper"><div class="custom-select-trigger"><span>${defaultCountry.flag} ${defaultCountry.code}</span></div><div class="custom-select-options"><input type="text" class="custom-select-search" placeholder="Search Country..."><ul class="options-list"></ul></div></div>`;
+            wrapper.dataset.value = defaultCountry.code;
+            const trigger = wrapper.querySelector('.custom-select-trigger'); const optionsContainer = wrapper.querySelector('.custom-select-options'); const searchInput = wrapper.querySelector('.custom-select-search'); const optionsList = wrapper.querySelector('.options-list');
+            populateOptions(optionsList, '');
+            trigger.addEventListener('click', () => { optionsContainer.classList.toggle('open'); if (optionsContainer.classList.contains('open')) { searchInput.focus(); } });
+            searchInput.addEventListener('keyup', () => { populateOptions(optionsList, searchInput.value); });
+            window.addEventListener('click', (e) => { if (!wrapper.contains(e.target)) { optionsContainer.classList.remove('open'); } });
+        });
+    }
 
-        function triggerConfetti() {
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+    function populateOptions(listElement, filter) {
+        const wrapper = listElement.closest('.country-select-custom'); const triggerSpan = wrapper.querySelector('.custom-select-trigger span');
+        listElement.innerHTML = '';
+        const filteredData = countryData.filter(country => country.name.toLowerCase().includes(filter.toLowerCase()) || country.code.includes(filter));
+        filteredData.forEach(country => {
+            const li = document.createElement('li'); li.textContent = `${country.flag} ${country.name} (${country.code})`; li.dataset.value = country.code; li.dataset.display = `${country.flag} ${country.code}`;
+            li.addEventListener('click', () => { triggerSpan.textContent = li.dataset.display; wrapper.dataset.value = li.dataset.value; wrapper.querySelector('.custom-select-options').classList.remove('open'); });
+            listElement.appendChild(li);
+        });
+    }
 
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) return clearInterval(interval);
-
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-        }
-
-    </script>
+</script>
 </body>
 </html>
